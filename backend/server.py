@@ -520,8 +520,7 @@ async def get_user_profile(user_id: str):
     try:
         user = users_collection.find_one({"user_id": user_id})
         if user:
-            user['_id'] = str(user['_id'])
-            return user
+            return convert_objectid(user)
         else:
             raise HTTPException(status_code=404, detail="User not found")
     except Exception as e:
