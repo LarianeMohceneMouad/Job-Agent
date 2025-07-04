@@ -13,6 +13,11 @@ import io
 import re
 from pydantic import BaseModel
 from huggingface_hub import InferenceClient
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Import the job scraper (will handle import errors gracefully)
 try:
