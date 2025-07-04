@@ -172,9 +172,11 @@ def extract_resume_info(text: str) -> dict:
 async def generate_ai_content(prompt: str, max_tokens: int = 512, temperature: float = 0.7) -> str:
     """Generate content using Hugging Face Mistral model"""
     if not hf_client:
+        print("ERROR: Hugging Face client not initialized")
         raise HTTPException(status_code=500, detail="Hugging Face client not initialized")
     
     try:
+        print(f"Calling Hugging Face API with token: {HUGGINGFACE_API_TOKEN[:5]}...")
         response = hf_client.text_generation(
             prompt=prompt,
             max_new_tokens=max_tokens,
@@ -184,6 +186,9 @@ async def generate_ai_content(prompt: str, max_tokens: int = 512, temperature: f
         )
         return response
     except Exception as e:
+        print(f"ERROR in AI generation: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
 
 async def customize_resume_for_job(original_resume: str, job_title: str, job_description: str, company: str) -> str:
