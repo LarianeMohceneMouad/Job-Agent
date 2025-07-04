@@ -1071,12 +1071,9 @@ async def get_discovered_jobs(user_id: str, source: Optional[str] = None, limit:
         )
         
         # Convert ObjectId to string
-        for job in discovered_jobs:
-            job['_id'] = str(job['_id'])
-        
         return {
             "success": True,
-            "jobs": discovered_jobs,
+            "jobs": convert_objectid(discovered_jobs),
             "count": len(discovered_jobs)
         }
         
