@@ -605,8 +605,7 @@ async def get_job_preferences(user_id: str):
     try:
         preferences = db.preferences.find_one({"user_id": user_id})
         if preferences:
-            preferences['_id'] = str(preferences['_id'])
-            return preferences
+            return convert_objectid(preferences)
         else:
             return {"message": "No preferences found"}
     except Exception as e:
