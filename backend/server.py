@@ -168,6 +168,119 @@ def extract_resume_info(text: str) -> dict:
         'raw_text': text
     }
 
+# AI Service Functions
+async def generate_ai_content(prompt: str, max_tokens: int = 512, temperature: float = 0.7) -> str:
+    """Generate content using Hugging Face Mistral model"""
+    if not hf_client:
+        raise HTTPException(status_code=500, detail="Hugging Face client not initialized")
+    
+    try:
+        response = hf_client.text_generation(
+            prompt=prompt,
+            max_new_tokens=max_tokens,
+            temperature=temperature,
+            top_p=0.9,
+            return_full_text=False
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
+
+async def customize_resume_for_job(original_resume: str, job_title: str, job_description: str, company: str) -> str:
+    """Customize resume for specific job using AI"""
+    prompt = f"""
+As a professional resume writer, customize the following resume for a {job_title} position at {company}.
+
+Original Resume:
+{original_resume}
+
+Job Description:
+{job_description}
+
+Instructions:
+1. Highlight relevant skills and experience that match the job requirements
+2. Adjust the professional summary to align with the role
+3. Reorder sections to emphasize most relevant qualifications
+4. Use keywords from the job description naturally
+5. Maintain professional formatting and tone
+6. Keep all factual information accurate
+
+Customized Resume:
+"""
+    
+    return await generate_ai_content(prompt, max_tokens=800, temperature=0.6)
+
+async def generate_cover_letter(applicant_name: str, job_title: str, company: str, job_description: str, user_background: str, skills: List[str]) -> str:
+    """Generate personalized cover letter using AI"""
+    skills_text = ", ".join(skills)
+    
+    prompt = f"""
+Write a professional cover letter for {applicant_name} applying for the {job_title} position at {company}.
+
+Applicant Background:
+{user_background}
+
+Key Skills: {skills_text}
+
+Job Description:
+{job_description}
+
+Requirements:
+1. Professional and engaging tone
+2. Highlight 2-3 most relevant experiences
+3. Show enthusiasm for the company and role
+4. Include specific examples of achievements
+5. Keep it concise (3-4 paragraphs)
+6. End with a strong call to action
+
+Cover Letter:
+"""
+    
+    return await generate_ai_content(prompt, max_tokens=600, temperature=0.7)
+
+async def analyze_job_match(resume_text: str, job_title: str, job_description: str, requirements: List[str]) -> dict:
+    """Analyze how well a candidate matches a job using AI"""
+    requirements_text = "\n".join([f"- {req}" for req in requirements])
+    
+    prompt = f"""
+Analyze the job match between this candidate and the job position. Provide a detailed assessment.
+
+Candidate Resume:
+{resume_text}
+
+Job Title: {job_title}
+
+Job Description:
+{job_description}
+
+Key Requirements:
+{requirements_text}
+
+Please provide:
+1. Match Score (0-100): Overall compatibility percentage
+2. Strengths: Top 3 areas where candidate excels
+3. Gaps: Areas where candidate may need improvement
+4. Recommendations: Specific advice for the candidate
+5. Summary: Brief overall assessment
+
+Format your response as JSON with these exact keys: match_score, strengths, gaps, recommendations, summary
+"""
+    
+    response = await generate_ai_content(prompt, max_tokens=500, temperature=0.5)
+    
+    # Try to parse as JSON, fallback to text if needed
+    try:
+        import json
+        return json.loads(response)
+    except:
+        return {
+            "match_score": 0,
+            "strengths": [],
+            "gaps": [],
+            "recommendations": [],
+            "summary": response
+        }
+
 # API Routes
 @app.get("/api/health")
 async def health_check():
