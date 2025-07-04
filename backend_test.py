@@ -266,6 +266,150 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIn("count", data)
         
         print("✅ Applications Retrieval API test passed")
+    
+    def test_10_ai_customize_resume(self):
+        """Test AI resume customization endpoint"""
+        print("\n=== Testing AI Resume Customization API ===")
+        response = requests.post(
+            f"{API_URL}/ai/customize-resume",
+            json=SAMPLE_RESUME_CUSTOMIZATION_REQUEST
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Response content preview: {response.text[:200]}...")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("content", data)
+        self.assertIsNotNone(data["content"])
+        self.assertGreater(len(data["content"]), 50)  # Ensure we got a substantial response
+        self.assertIn("metadata", data)
+        self.assertEqual(data["metadata"]["job_title"], SAMPLE_JOB_TITLE)
+        self.assertEqual(data["metadata"]["company"], SAMPLE_COMPANY)
+        
+        print("✅ AI Resume Customization API test passed")
+    
+    def test_11_ai_generate_cover_letter(self):
+        """Test AI cover letter generation endpoint"""
+        print("\n=== Testing AI Cover Letter Generation API ===")
+        response = requests.post(
+            f"{API_URL}/ai/generate-cover-letter",
+            json=SAMPLE_COVER_LETTER_REQUEST
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Response content preview: {response.text[:200]}...")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("content", data)
+        self.assertIsNotNone(data["content"])
+        self.assertGreater(len(data["content"]), 50)  # Ensure we got a substantial response
+        self.assertIn("metadata", data)
+        self.assertEqual(data["metadata"]["job_title"], SAMPLE_JOB_TITLE)
+        self.assertEqual(data["metadata"]["company"], SAMPLE_COMPANY)
+        
+        print("✅ AI Cover Letter Generation API test passed")
+    
+    def test_12_ai_analyze_job_match(self):
+        """Test AI job match analysis endpoint"""
+        print("\n=== Testing AI Job Match Analysis API ===")
+        response = requests.post(
+            f"{API_URL}/ai/analyze-job-match",
+            json=SAMPLE_JOB_MATCH_REQUEST
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Response content preview: {response.text[:200]}...")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("content", data)
+        self.assertIsNotNone(data["content"])
+        self.assertIn("metadata", data)
+        
+        # Check if metadata contains expected fields
+        metadata = data["metadata"]
+        self.assertIn("match_score", metadata)
+        self.assertIn("strengths", metadata)
+        self.assertIn("gaps", metadata)
+        self.assertIn("recommendations", metadata)
+        self.assertIn("summary", metadata)
+        
+        print("✅ AI Job Match Analysis API test passed")
+    
+    def test_13_ai_apply_to_job(self):
+        """Test AI job application endpoint"""
+        print("\n=== Testing AI Job Application API ===")
+        
+        # First, ensure we have a user profile and resume
+        self.test_02_create_user_profile()
+        self.test_04_upload_resume()
+        
+        response = requests.post(
+            f"{API_URL}/ai/apply-to-job?user_id={TEST_USER_ID}",
+            json=SAMPLE_JOB_DATA
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Response content preview: {response.text[:200]}...")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("application_id", data)
+        self.assertIn("message", data)
+        self.assertIn("customized_resume", data)
+        self.assertIn("cover_letter", data)
+        
+        print("✅ AI Job Application API test passed")
+    
+    def test_14_get_user_ai_content(self):
+        """Test retrieving user AI content"""
+        print("\n=== Testing User AI Content Retrieval API ===")
+        
+        # First, generate some AI content for the user
+        self.test_10_ai_customize_resume()
+        self.test_11_ai_generate_cover_letter()
+        self.test_12_ai_analyze_job_match()
+        
+        response = requests.get(f"{API_URL}/ai/user-content/{TEST_USER_AI_ID}")
+        print(f"Response: {response.status_code}")
+        print(f"Response structure: {json.dumps(response.json().keys(), indent=2)}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("customized_resumes", data)
+        self.assertIn("cover_letters", data)
+        self.assertIn("job_matches", data)
+        
+        # Verify we have at least one item in each category
+        self.assertGreaterEqual(len(data["customized_resumes"]), 1)
+        self.assertGreaterEqual(len(data["cover_letters"]), 1)
+        self.assertGreaterEqual(len(data["job_matches"]), 1)
+        
+        print("✅ User AI Content Retrieval API test passed")
+    
+    def test_15_sample_jobs_exist(self):
+        """Test that sample jobs are created if none exist"""
+        print("\n=== Testing Sample Jobs Creation ===")
+        response = requests.get(f"{API_URL}/jobs?user_id={TEST_USER_ID}")
+        print(f"Response: {response.status_code}")
+        print(f"Jobs count: {response.json()['count']}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("jobs", data)
+        self.assertGreater(data["count"], 0)  # Ensure we have at least one job
+        
+        # Check if the sample jobs have the expected structure
+        job = data["jobs"][0]
+        self.assertIn("job_id", job)
+        self.assertIn("title", job)
+        self.assertIn("company", job)
+        self.assertIn("description", job)
+        self.assertIn("requirements", job)
+        
+        print("✅ Sample Jobs Creation test passed")
 
 if __name__ == "__main__":
     # Install reportlab if not already installed
