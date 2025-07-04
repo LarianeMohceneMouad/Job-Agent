@@ -369,6 +369,13 @@ const Dashboard = ({ user }) => {
               color="purple"
             />
             <QuickAction
+              icon={Globe}
+              title="Job Discovery"
+              description="Discover jobs from JustJoinIT, InHire, and company career pages"
+              to="/discovery"
+              color="blue"
+            />
+            <QuickAction
               icon={Settings}
               title="Set Preferences"
               description="Configure your job search preferences and filters"
@@ -377,8 +384,8 @@ const Dashboard = ({ user }) => {
             />
             <QuickAction
               icon={Search}
-              title="Search Jobs"
-              description="Find and apply to jobs matching your profile"
+              title="Browse Jobs"
+              description="Search and apply to curated job listings"
               to="/jobs"
               color="orange"
             />
