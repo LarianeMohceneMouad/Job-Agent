@@ -24,6 +24,7 @@ const Navbar = ({ user, onLogout }) => {
     { name: 'Resume', path: '/resume', icon: FileText },
     { name: 'Preferences', path: '/preferences', icon: Settings },
     { name: 'AI Tools', path: '/ai-tools', icon: Brain },
+    { name: 'Discovery', path: '/discovery', icon: Globe },
     { name: 'Jobs', path: '/jobs', icon: Search },
     { name: 'Applications', path: '/applications', icon: Briefcase },
   ];
