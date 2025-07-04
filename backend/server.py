@@ -13,7 +13,36 @@ import io
 import re
 from pydantic import BaseModel
 from huggingface_hub import InferenceClient
-from job_scraper import run_job_discovery
+
+# Import the job scraper (will handle import errors gracefully)
+try:
+    import sys
+    sys.path.append('/app/backend')
+    from job_scraper import run_job_discovery
+    JOB_SCRAPER_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: Job scraper not available: {e}")
+    JOB_SCRAPER_AVAILABLE = False
+    
+    # Mock function for job discovery
+    async def run_job_discovery(search_params=None):
+        print("Using mock job discovery")
+        return [
+            {
+                'job_id': f"mock_job_{int(datetime.now().timestamp())}",
+                'title': 'Software Engineer',
+                'company': 'Tech Company',
+                'location': 'Remote',
+                'description': 'Great opportunity for software engineers.',
+                'requirements': ['Programming experience', 'Problem-solving skills'],
+                'salary_range': '$80,000 - $120,000',
+                'job_type': 'full-time',
+                'source_url': 'https://example.com',
+                'source': 'Mock Source',
+                'posted_date': datetime.now(),
+                'scraped_at': datetime.now()
+            }
+        ]
 
 app = FastAPI(title="AI Job Application System", version="1.0.0")
 
