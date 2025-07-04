@@ -963,17 +963,9 @@ async def ai_apply_to_job(user_id: str, job_data: dict):
 
 # Job Discovery Endpoints (Phase 3: Web Automation)
 @app.post("/api/discover/jobs")
-async def discover_jobs_from_web(request: JobDiscoveryRequest, background_tasks: BackgroundTasks):
+async def discover_jobs_from_web(request: JobDiscoveryRequest):
     """Discover jobs from web sources (JustJoinIT, InHire, Company careers)"""
     try:
-        # Prepare search parameters
-        search_params = {
-            "keywords": request.keywords,
-            "locations": request.locations,
-            "job_titles": request.job_titles,
-            "sources": request.sources
-        }
-        
         # Create mock jobs for testing
         mock_jobs = [
             {
