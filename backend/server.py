@@ -546,7 +546,8 @@ async def get_resume(user_id: str):
         else:
             raise HTTPException(status_code=404, detail="Resume not found")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in get_resume: {e}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.post("/api/preferences")
 async def save_job_preferences(preferences: JobPreferences):
