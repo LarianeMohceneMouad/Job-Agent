@@ -623,6 +623,218 @@ class TestBackendAPI(unittest.TestCase):
         
         print("✅ Enhanced Error Handling test passed")
 
+class TestWebAutomationAPI(unittest.TestCase):
+    """Test suite for the Phase 3 Web Automation features"""
+    
+    def test_01_discover_jobs(self):
+        """Test job discovery from web sources"""
+        print("\n=== Testing Job Discovery API ===")
+        
+        # Test with different search parameters
+        search_params = {
+            "user_id": TEST_USER_ID,
+            "keywords": ["python", "developer"],
+            "locations": ["Remote", "Europe"],
+            "job_titles": ["Software Engineer", "Developer"],
+            "sources": ["justjoinit", "inhire", "companies"]
+        }
+        
+        response = requests.post(
+            f"{API_URL}/discover/jobs",
+            json=search_params
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Jobs found: {response.json().get('jobs_found', 0)}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("jobs_found", data)
+        self.assertIn("jobs", data)
+        self.assertIn("sources_scraped", data)
+        self.assertIn("timestamp", data)
+        
+        # Verify jobs structure
+        if data["jobs"]:
+            job = data["jobs"][0]
+            self.assertIn("job_id", job)
+            self.assertIn("title", job)
+            self.assertIn("company", job)
+            self.assertIn("location", job)
+            self.assertIn("description", job)
+            self.assertIn("source", job)
+            self.assertIn("source_url", job)
+        
+        print("✅ Job Discovery API test passed")
+    
+    def test_02_get_discovered_jobs(self):
+        """Test retrieving discovered jobs for a user"""
+        print("\n=== Testing Get Discovered Jobs API ===")
+        
+        # First, ensure we have some discovered jobs
+        self.test_01_discover_jobs()
+        
+        # Now retrieve the discovered jobs
+        response = requests.get(f"{API_URL}/discover/jobs/{TEST_USER_ID}")
+        print(f"Response: {response.status_code}")
+        print(f"Jobs count: {response.json().get('count', 0)}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("jobs", data)
+        self.assertIn("count", data)
+        
+        # Test filtering by source
+        if data["jobs"] and len(data["jobs"]) > 0:
+            source = data["jobs"][0]["source"]
+            response = requests.get(f"{API_URL}/discover/jobs/{TEST_USER_ID}?source={source}")
+            self.assertEqual(response.status_code, 200)
+            filtered_data = response.json()
+            self.assertTrue(filtered_data["success"])
+            
+            # All jobs should have the specified source
+            if filtered_data["jobs"]:
+                for job in filtered_data["jobs"]:
+                    self.assertEqual(job["source"], source)
+        
+        print("✅ Get Discovered Jobs API test passed")
+    
+    def test_03_get_available_sources(self):
+        """Test retrieving available job discovery sources"""
+        print("\n=== Testing Available Sources API ===")
+        
+        response = requests.get(f"{API_URL}/discover/sources")
+        print(f"Response: {response.status_code}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("sources", data)
+        
+        # Verify sources structure
+        sources = data["sources"]
+        self.assertGreaterEqual(len(sources), 3)  # Should have at least 3 sources
+        
+        for source in sources:
+            self.assertIn("id", source)
+            self.assertIn("name", source)
+            self.assertIn("description", source)
+            self.assertIn("website", source)
+            self.assertIn("supported_locations", source)
+            self.assertIn("job_types", source)
+        
+        # Verify specific sources
+        source_ids = [source["id"] for source in sources]
+        self.assertIn("justjoinit", source_ids)
+        self.assertIn("inhire", source_ids)
+        self.assertIn("companies", source_ids)
+        
+        print("✅ Available Sources API test passed")
+    
+    def test_04_refresh_jobs(self):
+        """Test refreshing job discoveries for a user"""
+        print("\n=== Testing Refresh Jobs API ===")
+        
+        # First, ensure we have user preferences
+        requests.post(
+            f"{API_URL}/preferences",
+            json=SAMPLE_PREFERENCES
+        )
+        
+        # Now refresh jobs
+        response = requests.post(f"{API_URL}/discover/refresh-jobs?user_id={TEST_USER_ID}")
+        print(f"Response: {response.status_code}")
+        print(f"Jobs found: {response.json().get('jobs_found', 0)}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("message", data)
+        self.assertIn("jobs_found", data)
+        
+        print("✅ Refresh Jobs API test passed")
+    
+    def test_05_job_deduplication(self):
+        """Test job deduplication when discovering jobs multiple times"""
+        print("\n=== Testing Job Deduplication ===")
+        
+        # Run job discovery twice with the same parameters
+        search_params = {
+            "user_id": TEST_USER_ID,
+            "keywords": ["python"],
+            "sources": ["companies"]  # Use only companies source for faster test
+        }
+        
+        # First discovery
+        response1 = requests.post(
+            f"{API_URL}/discover/jobs",
+            json=search_params
+        )
+        self.assertEqual(response1.status_code, 200)
+        data1 = response1.json()
+        jobs_found1 = data1["jobs_found"]
+        
+        # Second discovery (should deduplicate)
+        response2 = requests.post(
+            f"{API_URL}/discover/jobs",
+            json=search_params
+        )
+        self.assertEqual(response2.status_code, 200)
+        data2 = response2.json()
+        
+        # Get all discovered jobs
+        response3 = requests.get(f"{API_URL}/discover/jobs/{TEST_USER_ID}")
+        self.assertEqual(response3.status_code, 200)
+        data3 = response3.json()
+        
+        print(f"First discovery: {jobs_found1} jobs")
+        print(f"Second discovery: {data2['jobs_found']} jobs")
+        print(f"Total unique jobs: {data3['count']} jobs")
+        
+        # The total unique jobs should be greater than or equal to the first discovery
+        # but may not be exactly the sum of both discoveries due to deduplication
+        self.assertGreaterEqual(data3["count"], jobs_found1)
+        
+        print("✅ Job Deduplication test passed")
+    
+    def test_06_fallback_job_creation(self):
+        """Test fallback job creation when scraping fails"""
+        print("\n=== Testing Fallback Job Creation ===")
+        
+        # We can't directly test scraping failures, but we can verify
+        # that jobs are returned even with invalid parameters
+        search_params = {
+            "user_id": TEST_USER_ID,
+            "keywords": ["thisisaninvalidkeywordthatwontmatchanything12345"],
+            "sources": ["justjoinit", "inhire"]
+        }
+        
+        response = requests.post(
+            f"{API_URL}/discover/jobs",
+            json=search_params
+        )
+        print(f"Response: {response.status_code}")
+        print(f"Jobs found: {response.json().get('jobs_found', 0)}")
+        
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        
+        # Even with invalid search, we should get some fallback jobs
+        self.assertGreater(data["jobs_found"], 0)
+        
+        # Check if jobs have the expected sources
+        sources = set()
+        for job in data["jobs"]:
+            sources.add(job["source"])
+        
+        print(f"Sources found: {sources}")
+        
+        # Should have at least one of the requested sources
+        self.assertTrue(any(source in ["JustJoinIT", "InHire"] for source in sources))
+        
+        print("✅ Fallback Job Creation test passed")
+
 if __name__ == "__main__":
     # Install reportlab if not already installed
     try:
