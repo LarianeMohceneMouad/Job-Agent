@@ -45,6 +45,15 @@ export const applicationsAPI = {
   updateApplication: (applicationId, updateData) => api.put(`/api/applications/${applicationId}`, updateData),
 };
 
+// AI API
+export const aiAPI = {
+  customizeResume: (data) => api.post('/api/ai/customize-resume', data),
+  generateCoverLetter: (data) => api.post('/api/ai/generate-cover-letter', data),
+  analyzeJobMatch: (data) => api.post('/api/ai/analyze-job-match', data),
+  applyToJob: (userId, jobData) => api.post(`/api/ai/apply-to-job?user_id=${userId}`, jobData),
+  getUserAIContent: (userId) => api.get(`/api/ai/user-content/${userId}`),
+};
+
 // Health Check
 export const healthCheck = () => api.get('/api/health');
 
