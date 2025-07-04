@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   FileText, 
   Settings, 
@@ -9,9 +9,13 @@ import {
   Clock,
   AlertCircle,
   TrendingUp,
-  Brain
+  Brain,
+  Star,
+  ArrowRight,
+  Zap
 } from 'lucide-react';
-import { applicationsAPI, jobsAPI } from '../services/api';
+import { applicationsAPI, resumeAPI, userProfileAPI, preferencesAPI } from '../services/api';
+import OnboardingGuide from '../components/OnboardingGuide';
 import toast from 'react-hot-toast';
 
 const Dashboard = ({ user }) => {
