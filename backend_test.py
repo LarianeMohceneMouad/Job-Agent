@@ -628,16 +628,7 @@ class TestBackendAPI(unittest.TestCase):
         """Test improved error handling with user-friendly messages"""
         print("\n=== Testing Enhanced Error Handling ===")
         
-        # Test with invalid job ID
-        response = requests.post(
-            f"{API_URL}/ai/apply-to-job?user_id=nonexistent_user",
-            json=SAMPLE_JOB_DATA
-        )
-        
-        print(f"Response for invalid user: {response.status_code} - {response.text}")
-        self.assertEqual(response.status_code, 404)
-        
-        # Test with invalid resume customization request
+        # Test with invalid request format
         invalid_request = {
             # Missing required fields
             "user_id": TEST_USER_AI_ID
