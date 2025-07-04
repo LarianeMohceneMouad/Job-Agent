@@ -98,6 +98,35 @@ class JobApplication(BaseModel):
     cover_letter: str
     applied_at: datetime = datetime.now()
 
+# AI Request/Response Models
+class ResumeCustomizationRequest(BaseModel):
+    user_id: str
+    original_resume: str
+    job_title: str
+    job_description: str
+    company: str
+
+class CoverLetterRequest(BaseModel):
+    user_id: str
+    applicant_name: str
+    job_title: str
+    company: str
+    job_description: str
+    user_background: str
+    skills: List[str]
+
+class JobMatchRequest(BaseModel):
+    user_id: str
+    resume_text: str
+    job_title: str
+    job_description: str
+    requirements: List[str]
+
+class AIResponse(BaseModel):
+    success: bool
+    content: str
+    metadata: Optional[dict] = None
+
 # Utility functions
 def parse_pdf_resume(file_content: bytes) -> str:
     """Extract text from PDF resume"""
