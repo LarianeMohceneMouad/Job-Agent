@@ -13,7 +13,8 @@ import {
   Star,
   ArrowRight,
   Zap,
-  User
+  User,
+  Globe
 } from 'lucide-react';
 import { applicationsAPI, resumeAPI, userProfileAPI, preferencesAPI } from '../services/api';
 import OnboardingGuide from '../components/OnboardingGuide';
