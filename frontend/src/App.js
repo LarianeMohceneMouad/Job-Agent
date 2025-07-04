@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import ResumeUpload from './pages/ResumeUpload';
 import JobPreferences from './pages/JobPreferences';
 import AITools from './pages/AITools';
+import JobDiscovery from './pages/JobDiscovery';
 import JobSearch from './pages/JobSearch';
 import Applications from './pages/Applications';
 import './App.css';
