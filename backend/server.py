@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pymongo import MongoClient
@@ -13,6 +13,7 @@ import io
 import re
 from pydantic import BaseModel
 from huggingface_hub import InferenceClient
+from job_scraper import run_job_discovery
 
 app = FastAPI(title="AI Job Application System", version="1.0.0")
 
