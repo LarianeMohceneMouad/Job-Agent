@@ -61,22 +61,37 @@ const JobSearch = ({ user }) => {
     setApplying(prev => ({ ...prev, [job.job_id]: true }));
     
     try {
-      // This is a placeholder for the actual application logic
-      // In the next phase, this will integrate with AI and web automation
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      // Use AI to apply to job with customized resume and cover letter
+      const response = await aiAPI.applyToJob(user.user_id, {
+        job_id: job.job_id || `job_${Date.now()}`,
+        title: job.title,
+        company: job.company,
+        description: job.description,
+        requirements: job.requirements || [],
+        location: job.location,
+        job_type: job.job_type,
+        salary_range: job.salary_range,
+        source_url: job.source_url
+      });
       
-      toast.success(`Applied to ${job.title} at ${job.company}!`);
-      
-      // Update job status locally
-      setJobs(prev => prev.map(j => 
-        j.job_id === job.job_id 
-          ? { ...j, applied: true }
-          : j
-      ));
+      if (response.data.success) {
+        toast.success(`🤖 AI applied to ${job.title} at ${job.company}!`);
+        
+        // Update job status locally
+        setJobs(prev => prev.map(j => 
+          j.job_id === job.job_id 
+            ? { ...j, applied: true }
+            : j
+        ));
+      }
       
     } catch (error) {
       console.error('Error applying to job:', error);
-      toast.error('Failed to apply to job');
+      if (error.response?.status === 404) {
+        toast.error('Please upload your resume and complete your profile first');
+      } else {
+        toast.error('Failed to apply to job. Please try again.');
+      }
     } finally {
       setApplying(prev => ({ ...prev, [job.job_id]: false }));
     }
