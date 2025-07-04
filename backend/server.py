@@ -545,19 +545,20 @@ async def get_jobs(user_id: str):
         # Check if we have jobs in database, if not, create sample jobs
         job_count = jobs_collection.count_documents({})
         if job_count == 0:
-            # Create sample jobs for testing
+            # Create diverse sample jobs for testing
             sample_jobs = [
                 {
                     "job_id": "job_1",
                     "title": "Senior Software Engineer",
                     "company": "TechCorp Inc",
                     "location": "San Francisco, CA",
-                    "description": "We are looking for a Senior Software Engineer to join our team. You will be responsible for designing, developing, and maintaining web applications using modern technologies.",
+                    "description": "Join our innovative team building next-generation web applications. We're looking for a Senior Software Engineer with expertise in Python, React, and cloud technologies to help scale our platform serving millions of users.",
                     "requirements": [
                         "5+ years of software development experience",
                         "Proficiency in Python, JavaScript, and React",
                         "Experience with cloud platforms (AWS, GCP)",
-                        "Strong problem-solving skills"
+                        "Strong problem-solving and communication skills",
+                        "Bachelor's degree in Computer Science or related field"
                     ],
                     "salary_range": "$120,000 - $160,000",
                     "job_type": "full-time",
@@ -570,12 +571,13 @@ async def get_jobs(user_id: str):
                     "title": "Full Stack Developer",
                     "company": "StartupXYZ",
                     "location": "New York, NY",
-                    "description": "Join our fast-growing startup as a Full Stack Developer. Work with cutting-edge technologies and help build products that impact millions of users.",
+                    "description": "Join our fast-growing startup as a Full Stack Developer. Work with cutting-edge technologies including React, Node.js, and MongoDB to build products that impact millions of users. Great opportunity for career growth.",
                     "requirements": [
                         "3+ years of full stack development",
                         "React, Node.js, MongoDB experience",
-                        "Understanding of RESTful APIs",
-                        "Startup experience preferred"
+                        "Understanding of RESTful APIs and microservices",
+                        "Startup experience preferred",
+                        "Ability to work in fast-paced environment"
                     ],
                     "salary_range": "$90,000 - $130,000",
                     "job_type": "full-time",
@@ -588,12 +590,13 @@ async def get_jobs(user_id: str):
                     "title": "Data Scientist",
                     "company": "DataTech Solutions",
                     "location": "Austin, TX",
-                    "description": "We're seeking a Data Scientist to analyze complex datasets and build machine learning models that drive business decisions.",
+                    "description": "We're seeking a Data Scientist to analyze complex datasets and build machine learning models that drive business decisions. You'll work with large-scale data and cutting-edge ML techniques.",
                     "requirements": [
                         "PhD or Masters in Data Science, Statistics, or related field",
                         "Experience with Python, R, and SQL",
-                        "Machine learning and statistical modeling",
-                        "Experience with big data tools"
+                        "Machine learning and statistical modeling expertise",
+                        "Experience with big data tools (Spark, Hadoop)",
+                        "Strong analytical and problem-solving skills"
                     ],
                     "salary_range": "$110,000 - $150,000",
                     "job_type": "full-time",
@@ -606,12 +609,13 @@ async def get_jobs(user_id: str):
                     "title": "Frontend Developer",
                     "company": "WebDesign Pro",
                     "location": "Remote",
-                    "description": "Looking for a talented Frontend Developer to create beautiful, responsive web interfaces using modern frameworks.",
+                    "description": "Looking for a talented Frontend Developer to create beautiful, responsive web interfaces using modern frameworks. Join our remote team and work on projects for Fortune 500 companies.",
                     "requirements": [
                         "3+ years of frontend development",
-                        "Expert in React, HTML5, CSS3",
-                        "Experience with modern build tools",
-                        "Strong design sense"
+                        "Expert in React, HTML5, CSS3, TypeScript",
+                        "Experience with modern build tools (Webpack, Vite)",
+                        "Strong design sense and attention to detail",
+                        "Experience with responsive design and accessibility"
                     ],
                     "salary_range": "$80,000 - $120,000",
                     "job_type": "remote",
@@ -624,16 +628,74 @@ async def get_jobs(user_id: str):
                     "title": "DevOps Engineer",
                     "company": "CloudFirst Technologies",
                     "location": "Seattle, WA",
-                    "description": "Join our DevOps team to build and maintain scalable infrastructure. Work with containerization, CI/CD, and cloud technologies.",
+                    "description": "Join our DevOps team to build and maintain scalable infrastructure. Work with containerization, CI/CD pipelines, and cloud technologies to support rapid development and deployment.",
                     "requirements": [
                         "4+ years of DevOps experience",
-                        "Docker, Kubernetes, Jenkins",
-                        "AWS or Azure cloud platforms",
-                        "Infrastructure as Code (Terraform)"
+                        "Docker, Kubernetes, Jenkins expertise",
+                        "AWS or Azure cloud platforms knowledge",
+                        "Infrastructure as Code (Terraform, CloudFormation)",
+                        "Strong scripting skills (Python, Bash)"
                     ],
                     "salary_range": "$100,000 - $140,000",
                     "job_type": "full-time",
                     "source_url": "https://example.com/job5",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_6",
+                    "title": "Product Manager",
+                    "company": "Innovation Labs",
+                    "location": "Boston, MA",
+                    "description": "Lead product strategy and development for our AI-powered applications. Work closely with engineering, design, and business teams to deliver products that delight users and drive growth.",
+                    "requirements": [
+                        "5+ years of product management experience",
+                        "Experience with AI/ML product development",
+                        "Strong analytical and data-driven approach",
+                        "Excellent communication and leadership skills",
+                        "MBA or technical background preferred"
+                    ],
+                    "salary_range": "$130,000 - $170,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job6",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_7",
+                    "title": "UX/UI Designer",
+                    "company": "Creative Studio",
+                    "location": "Los Angeles, CA",
+                    "description": "Create intuitive and beautiful user experiences for web and mobile applications. Work with cross-functional teams to design interfaces that users love and business stakeholders value.",
+                    "requirements": [
+                        "4+ years of UX/UI design experience",
+                        "Proficiency in Figma, Sketch, Adobe Creative Suite",
+                        "Strong portfolio showcasing design process",
+                        "Experience with user research and testing",
+                        "Understanding of frontend development principles"
+                    ],
+                    "salary_range": "$85,000 - $125,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job7",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_8",
+                    "title": "Mobile App Developer",
+                    "company": "MobileFirst Solutions",
+                    "location": "Remote",
+                    "description": "Develop cross-platform mobile applications using React Native and Flutter. Join our remote team building apps for iOS and Android that serve millions of users worldwide.",
+                    "requirements": [
+                        "3+ years of mobile app development",
+                        "React Native and/or Flutter experience",
+                        "Native iOS (Swift) or Android (Kotlin) knowledge",
+                        "Experience with app store deployment",
+                        "Understanding of mobile UI/UX principles"
+                    ],
+                    "salary_range": "$95,000 - $135,000",
+                    "job_type": "remote",
+                    "source_url": "https://example.com/job8",
                     "posted_date": datetime.now(),
                     "scraped_at": datetime.now()
                 }
