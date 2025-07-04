@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 import uuid
 import json
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 import PyPDF2
 import io
 import re
@@ -18,6 +18,33 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Utility function to convert MongoDB documents for JSON serialization
+def convert_objectid(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert MongoDB ObjectId to string for JSON serialization"""
+    if doc is None:
+        return None
+    if isinstance(doc, list):
+        return [convert_objectid(item) for item in doc]
+    if isinstance(doc, dict):
+        result = {}
+        for key, value in doc.items():
+            if isinstance(value, ObjectId):
+                result[key] = str(value)
+            elif isinstance(value, datetime):
+                result[key] = value.isoformat()
+            elif isinstance(value, dict):
+                result[key] = convert_objectid(value)
+            elif isinstance(value, list):
+                result[key] = convert_objectid(value)
+            else:
+                result[key] = value
+        return result
+    elif isinstance(doc, ObjectId):
+        return str(doc)
+    elif isinstance(doc, datetime):
+        return doc.isoformat()
+    return doc
 
 # Import the job scraper (will handle import errors gracefully)
 try:
