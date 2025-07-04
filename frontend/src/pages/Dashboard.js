@@ -154,6 +154,16 @@ const Dashboard = ({ user }) => {
     }
   };
 
+  const getSetupProgress = () => {
+    const completed = Object.values(setupProgress).filter(Boolean).length;
+    const total = Object.keys(setupProgress).length;
+    return Math.round((completed / total) * 100);
+  };
+
+  const isSetupComplete = () => {
+    return Object.values(setupProgress).every(Boolean);
+  };
+
   if (loading) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
@@ -170,14 +180,144 @@ const Dashboard = ({ user }) => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      {/* Onboarding Guide */}
+      {showOnboarding && (
+        <OnboardingGuide 
+          onClose={() => setShowOnboarding(false)}
+          onStepComplete={handleOnboardingStep}
+        />
+      )}
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-secondary-900 mb-2">
-          Welcome back, {user.user_id}!
+          Welcome back, {user.user_id}! 👋
         </h1>
         <p className="text-secondary-600">
-          Here's your job application overview
+          Here's your AI-powered job application overview
         </p>
       </div>
+
+      {/* Setup Progress Card */}
+      {!isSetupComplete() && (
+        <div className="card mb-8 bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-primary-100 rounded-full">
+                <Star className="w-5 h-5 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-secondary-900">Complete Your Setup</h3>
+                <p className="text-sm text-secondary-600">Get ready for AI-powered job applications</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-primary-600">{getSetupProgress()}%</div>
+              <div className="text-xs text-secondary-500">Complete</div>
+            </div>
+          </div>
+          
+          <div className="w-full bg-secondary-200 rounded-full h-2 mb-4">
+            <div 
+              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${getSetupProgress()}%` }}
+            ></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Link
+              to="/profile"
+              className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${
+                setupProgress.profile 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-white border border-secondary-200 hover:border-primary-300'
+              }`}
+            >
+              <div className={`p-2 rounded-full ${
+                setupProgress.profile ? 'bg-green-100' : 'bg-secondary-100'
+              }`}>
+                {setupProgress.profile ? (
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                ) : (
+                  <User className="w-4 h-4 text-secondary-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-sm text-secondary-900">Complete Profile</div>
+                <div className="text-xs text-secondary-600">Add your details</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-secondary-400" />
+            </Link>
+
+            <Link
+              to="/resume"
+              className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${
+                setupProgress.resume 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-white border border-secondary-200 hover:border-primary-300'
+              }`}
+            >
+              <div className={`p-2 rounded-full ${
+                setupProgress.resume ? 'bg-green-100' : 'bg-secondary-100'
+              }`}>
+                {setupProgress.resume ? (
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                ) : (
+                  <FileText className="w-4 h-4 text-secondary-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-sm text-secondary-900">Upload Resume</div>
+                <div className="text-xs text-secondary-600">PDF format</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-secondary-400" />
+            </Link>
+
+            <Link
+              to="/preferences"
+              className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${
+                setupProgress.preferences 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-white border border-secondary-200 hover:border-primary-300'
+              }`}
+            >
+              <div className={`p-2 rounded-full ${
+                setupProgress.preferences ? 'bg-green-100' : 'bg-secondary-100'
+              }`}>
+                {setupProgress.preferences ? (
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                ) : (
+                  <Settings className="w-4 h-4 text-secondary-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-sm text-secondary-900">Set Preferences</div>
+                <div className="text-xs text-secondary-600">Job criteria</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-secondary-400" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* AI Features Highlight */}
+      {isSetupComplete() && (
+        <div className="card mb-8 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-purple-100 rounded-full">
+                <Zap className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-secondary-900">🤖 AI Features Ready!</h3>
+                <p className="text-sm text-secondary-600">Your setup is complete. Use AI to supercharge your job search.</p>
+              </div>
+            </div>
+            <Link to="/ai-tools" className="btn-primary">
+              Try AI Tools
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
