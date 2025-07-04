@@ -34,7 +34,7 @@ db = client.job_application_db
 HUGGINGFACE_API_TOKEN = os.environ.get('HUGGINGFACE_API_TOKEN', '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')
 if HUGGINGFACE_API_TOKEN:
     hf_client = InferenceClient(
-        model="meta-llama/Llama-2-7b-chat-hf",
+        model="gpt2",
         token=HUGGINGFACE_API_TOKEN
     )
 else:
