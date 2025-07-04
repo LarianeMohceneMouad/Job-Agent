@@ -92,7 +92,7 @@ class JobScraper:
                 await self.session.close()
             if self.browser:
                 await self.browser.close()
-            if hasattr(self, 'playwright'):
+            if hasattr(self, 'playwright') and self.playwright:
                 await self.playwright.stop()
             logger.info("Job scraper cleanup completed")
         except Exception as e:
