@@ -109,6 +109,11 @@ class JobScraper:
         try:
             logger.info("Starting JustJoinIT scraping...")
             
+            # If browser is not available, use fallback
+            if not self.browser or not self.page:
+                logger.info("Browser not available, using fallback for JustJoinIT")
+                return self._get_fallback_justjoinit_jobs()
+            
             # Build search URL
             base_url = "https://justjoin.it"
             search_url = f"{base_url}/all-locations/javascript"  # Start with a broad search
