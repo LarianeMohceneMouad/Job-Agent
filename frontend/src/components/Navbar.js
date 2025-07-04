@@ -10,7 +10,8 @@ import {
   LogOut,
   Menu,
   X,
-  Brain
+  Brain,
+  Globe
 } from 'lucide-react';
 
 const Navbar = ({ user, onLogout }) => {
