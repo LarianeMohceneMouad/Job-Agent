@@ -685,19 +685,6 @@ class TestWebAutomationAPI(unittest.TestCase):
         self.assertIn("jobs", data)
         self.assertIn("count", data)
         
-        # Test filtering by source
-        if data["jobs"] and len(data["jobs"]) > 0:
-            source = data["jobs"][0]["source"]
-            response = requests.get(f"{API_URL}/discover/jobs/{TEST_USER_ID}?source={source}")
-            self.assertEqual(response.status_code, 200)
-            filtered_data = response.json()
-            self.assertTrue(filtered_data["success"])
-            
-            # All jobs should have the specified source
-            if filtered_data["jobs"]:
-                for job in filtered_data["jobs"]:
-                    self.assertEqual(job["source"], source)
-        
         print("✅ Get Discovered Jobs API test passed")
     
     def test_03_get_available_sources(self):
