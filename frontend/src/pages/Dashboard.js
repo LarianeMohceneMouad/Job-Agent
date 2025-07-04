@@ -173,18 +173,25 @@ const Dashboard = ({ user }) => {
               color="blue"
             />
             <QuickAction
+              icon={Brain}
+              title="AI Tools"
+              description="Use AI to customize resumes, generate cover letters, and analyze job matches"
+              to="/ai-tools"
+              color="purple"
+            />
+            <QuickAction
               icon={Settings}
               title="Set Preferences"
               description="Configure your job search preferences and filters"
               to="/preferences"
-              color="purple"
+              color="green"
             />
             <QuickAction
               icon={Search}
               title="Search Jobs"
               description="Find and apply to jobs matching your profile"
               to="/jobs"
-              color="green"
+              color="orange"
             />
           </div>
         </div>
