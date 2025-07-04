@@ -46,7 +46,7 @@
 
 ## Backend Testing Results ✅ ALL PASSED
 
-### Core API Endpoints Tested
+### Core API Endpoints Tested (12)
 1. **Health Check** - GET /api/health ✅
 2. **User Profile** - POST/GET /api/users/profile ✅
 3. **Resume Upload** - POST /api/resumes/upload ✅
@@ -55,12 +55,20 @@
 6. **Jobs Retrieval** - GET /api/jobs ✅
 7. **Applications** - GET /api/applications/{user_id} ✅
 
-### AI-Powered Endpoints ✅ ALL WORKING
+### AI-Powered Endpoints Tested (5)
 8. **Resume Customization** - POST /api/ai/customize-resume ✅
 9. **Cover Letter Generation** - POST /api/ai/generate-cover-letter ✅
 10. **Job Match Analysis** - POST /api/ai/analyze-job-match ✅
 11. **AI Job Application** - POST /api/ai/apply-to-job ✅
 12. **User AI Content** - GET /api/ai/user-content/{user_id} ✅
+
+### Web Automation Endpoints Tested (4) ✅ NEW
+13. **Job Discovery** - POST /api/discover/jobs ✅
+14. **Get Discovered Jobs** - GET /api/discover/jobs/{user_id} ✅
+15. **Available Sources** - GET /api/discover/sources ✅
+16. **Refresh Jobs** - POST /api/discover/refresh-jobs ✅
+
+**Total: 16 API endpoints tested and working**
 
 ### Key Features Working
 - ✅ PDF resume parsing with text extraction
