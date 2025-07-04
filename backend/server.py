@@ -440,6 +440,184 @@ async def get_applications(user_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# AI-Powered Endpoints
+@app.post("/api/ai/customize-resume")
+async def ai_customize_resume(request: ResumeCustomizationRequest):
+    """Customize resume for specific job using AI"""
+    try:
+        customized_resume = await customize_resume_for_job(
+            request.original_resume,
+            request.job_title,
+            request.job_description,
+            request.company
+        )
+        
+        # Save customized resume to database
+        resume_data = {
+            'user_id': request.user_id,
+            'original_resume': request.original_resume,
+            'job_title': request.job_title,
+            'company': request.company,
+            'customized_resume': customized_resume,
+            'created_at': datetime.now()
+        }
+        
+        db.customized_resumes.insert_one(resume_data)
+        
+        return AIResponse(
+            success=True,
+            content=customized_resume,
+            metadata={
+                'job_title': request.job_title,
+                'company': request.company
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ai/generate-cover-letter")
+async def ai_generate_cover_letter(request: CoverLetterRequest):
+    """Generate personalized cover letter using AI"""
+    try:
+        cover_letter = await generate_cover_letter(
+            request.applicant_name,
+            request.job_title,
+            request.company,
+            request.job_description,
+            request.user_background,
+            request.skills
+        )
+        
+        # Save cover letter to database
+        letter_data = {
+            'user_id': request.user_id,
+            'job_title': request.job_title,
+            'company': request.company,
+            'cover_letter': cover_letter,
+            'created_at': datetime.now()
+        }
+        
+        db.cover_letters.insert_one(letter_data)
+        
+        return AIResponse(
+            success=True,
+            content=cover_letter,
+            metadata={
+                'job_title': request.job_title,
+                'company': request.company
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ai/analyze-job-match")
+async def ai_analyze_job_match(request: JobMatchRequest):
+    """Analyze job compatibility using AI"""
+    try:
+        match_analysis = await analyze_job_match(
+            request.resume_text,
+            request.job_title,
+            request.job_description,
+            request.requirements
+        )
+        
+        # Save analysis to database
+        analysis_data = {
+            'user_id': request.user_id,
+            'job_title': request.job_title,
+            'match_analysis': match_analysis,
+            'created_at': datetime.now()
+        }
+        
+        db.job_matches.insert_one(analysis_data)
+        
+        return AIResponse(
+            success=True,
+            content=json.dumps(match_analysis),
+            metadata=match_analysis
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/ai/user-content/{user_id}")
+async def get_user_ai_content(user_id: str):
+    """Get all AI-generated content for a user"""
+    try:
+        customized_resumes = list(db.customized_resumes.find({"user_id": user_id}))
+        cover_letters = list(db.cover_letters.find({"user_id": user_id}))
+        job_matches = list(db.job_matches.find({"user_id": user_id}))
+        
+        # Convert ObjectId to string
+        for item in customized_resumes + cover_letters + job_matches:
+            item['_id'] = str(item['_id'])
+        
+        return {
+            "customized_resumes": customized_resumes,
+            "cover_letters": cover_letters,
+            "job_matches": job_matches
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ai/apply-to-job")
+async def ai_apply_to_job(user_id: str, job_data: dict):
+    """Apply to job with AI-generated content"""
+    try:
+        # Get user's resume
+        user_resume = resumes_collection.find_one({"user_id": user_id})
+        if not user_resume:
+            raise HTTPException(status_code=404, detail="User resume not found")
+        
+        # Get user profile
+        user_profile = users_collection.find_one({"user_id": user_id})
+        if not user_profile:
+            raise HTTPException(status_code=404, detail="User profile not found")
+        
+        # Generate customized resume
+        customized_resume = await customize_resume_for_job(
+            user_resume['content'],
+            job_data.get('title', ''),
+            job_data.get('description', ''),
+            job_data.get('company', '')
+        )
+        
+        # Generate cover letter
+        cover_letter = await generate_cover_letter(
+            user_profile.get('name', ''),
+            job_data.get('title', ''),
+            job_data.get('company', ''),
+            job_data.get('description', ''),
+            user_resume['content'],
+            user_resume['parsed_data'].get('skills', [])
+        )
+        
+        # Create job application record
+        application_id = str(uuid.uuid4())
+        application_data = {
+            'application_id': application_id,
+            'user_id': user_id,
+            'job_id': job_data.get('job_id', str(uuid.uuid4())),
+            'job_title': job_data.get('title', ''),
+            'company': job_data.get('company', ''),
+            'status': 'pending',
+            'customized_resume': customized_resume,
+            'cover_letter': cover_letter,
+            'applied_at': datetime.now(),
+            'job_data': job_data
+        }
+        
+        applications_collection.insert_one(application_data)
+        
+        return {
+            "success": True,
+            "application_id": application_id,
+            "message": f"Successfully applied to {job_data.get('title')} at {job_data.get('company')}",
+            "customized_resume": customized_resume,
+            "cover_letter": cover_letter
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
