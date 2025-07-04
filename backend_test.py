@@ -165,18 +165,20 @@ def create_test_pdf():
     os.close(fd)
     
     c = canvas.Canvas(path)
-    c.drawString(100, 750, "John Doe")
-    c.drawString(100, 735, "john.doe@example.com")
-    c.drawString(100, 720, "555-123-4567")
-    c.drawString(100, 705, "New York, NY")
-    c.drawString(100, 690, "Skills: Python, React, FastAPI, MongoDB")
-    c.drawString(100, 675, "Experience: 5 years of software development")
+    c.drawString(100, 750, "Emily Johnson")
+    c.drawString(100, 735, "emily.johnson@example.com")
+    c.drawString(100, 720, "555-987-6543")
+    c.drawString(100, 705, "Seattle, WA")
+    c.drawString(100, 690, "Skills: Python, React, Node.js, AWS, Docker, Kubernetes")
+    c.drawString(100, 675, "Experience: 7 years of software development")
+    c.drawString(100, 660, "Education: Master of Science in Computer Science")
+    c.drawString(100, 645, "Projects: E-commerce Platform, Task Management App")
     c.save()
     
     return path
 
 class TestBackendAPI(unittest.TestCase):
-    """Test suite for the AI Job Application System backend API"""
+    """Test suite for the Enhanced AI Job Application System backend API"""
     
     def test_01_health_check(self):
         """Test the health check endpoint"""
