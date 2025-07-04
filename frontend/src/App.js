@@ -77,6 +77,10 @@ const App = () => {
               element={currentUser ? <JobPreferences user={currentUser} /> : <Navigate to="/" />} 
             />
             <Route 
+              path="/ai-tools" 
+              element={currentUser ? <AITools user={currentUser} /> : <Navigate to="/" />} 
+            />
+            <Route 
               path="/jobs" 
               element={currentUser ? <JobSearch user={currentUser} /> : <Navigate to="/" />} 
             />
