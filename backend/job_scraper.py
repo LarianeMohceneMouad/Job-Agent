@@ -68,7 +68,22 @@ class JobScraper:
             logger.info("Job scraper initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize job scraper: {e}")
-            raise
+            # Don't raise the exception, just continue with fallback mechanisms
+            self.playwright = None
+            self.browser = None
+            self.context = None
+            self.page = None
+            
+            # Try to initialize just the session for basic requests
+            try:
+                self.session = aiohttp.ClientSession(
+                    timeout=aiohttp.ClientTimeout(total=30),
+                    headers={'User-Agent': random.choice(self.user_agents)}
+                )
+            except Exception:
+                self.session = None
+                
+            logger.info("Using fallback job discovery mechanisms")
 
     async def cleanup(self):
         """Clean up resources"""
