@@ -22,7 +22,7 @@ const Navbar = ({ user, onLogout }) => {
     { name: 'Profile', path: '/profile', icon: User },
     { name: 'Resume', path: '/resume', icon: FileText },
     { name: 'Preferences', path: '/preferences', icon: Settings },
-    { name: 'AI Tools', path: '/ai-tools', icon: Search },
+    { name: 'AI Tools', path: '/ai-tools', icon: Brain },
     { name: 'Jobs', path: '/jobs', icon: Search },
     { name: 'Applications', path: '/applications', icon: Briefcase },
   ];
