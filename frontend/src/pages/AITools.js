@@ -83,6 +83,8 @@ const AITools = ({ user }) => {
 
     try {
       setLoading(true);
+      toast.loading('🤖 AI is customizing your resume...', { id: 'resume-customize' });
+      
       const response = await aiAPI.customizeResume({
         user_id: user.user_id,
         original_resume: userResume.content,
@@ -92,10 +94,10 @@ const AITools = ({ user }) => {
       });
       
       setCustomizedResume(response.data.content);
-      toast.success('🤖 Resume customized successfully!');
+      toast.success('🎉 Resume customized successfully!', { id: 'resume-customize' });
     } catch (error) {
       console.error('Error customizing resume:', error);
-      toast.error('Failed to customize resume');
+      toast.error('Failed to customize resume', { id: 'resume-customize' });
     } finally {
       setLoading(false);
     }
@@ -114,6 +116,8 @@ const AITools = ({ user }) => {
 
     try {
       setLoading(true);
+      toast.loading('🤖 AI is generating your cover letter...', { id: 'cover-letter' });
+      
       const response = await aiAPI.generateCoverLetter({
         user_id: user.user_id,
         applicant_name: userProfile.name || user.user_id,
@@ -125,10 +129,10 @@ const AITools = ({ user }) => {
       });
       
       setGeneratedCoverLetter(response.data.content);
-      toast.success('🤖 Cover letter generated successfully!');
+      toast.success('🎉 Cover letter generated successfully!', { id: 'cover-letter' });
     } catch (error) {
       console.error('Error generating cover letter:', error);
-      toast.error('Failed to generate cover letter');
+      toast.error('Failed to generate cover letter', { id: 'cover-letter' });
     } finally {
       setLoading(false);
     }
@@ -147,6 +151,8 @@ const AITools = ({ user }) => {
 
     try {
       setLoading(true);
+      toast.loading('🤖 AI is analyzing job compatibility...', { id: 'job-match' });
+      
       const requirements = jobMatchForm.requirements
         .split('\n')
         .filter(req => req.trim())
@@ -161,10 +167,10 @@ const AITools = ({ user }) => {
       });
       
       setJobMatchAnalysis(response.data.metadata);
-      toast.success('🤖 Job match analysis completed!');
+      toast.success('🎉 Job match analysis completed!', { id: 'job-match' });
     } catch (error) {
       console.error('Error analyzing job match:', error);
-      toast.error('Failed to analyze job match');
+      toast.error('Failed to analyze job match', { id: 'job-match' });
     } finally {
       setLoading(false);
     }
