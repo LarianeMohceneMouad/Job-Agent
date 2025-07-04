@@ -191,8 +191,13 @@ class JobScraper:
             # InHire might require different approach - using requests for initial attempt
             base_url = "https://inhire.io"
             
+            # If session is not available, use fallback
+            if not self.session:
+                logger.info("Session not available, using fallback for InHire")
+                return self._get_fallback_inhire_jobs()
+            
             # Try to access the jobs page
-            if self.session:
+            try:
                 async with self.session.get(f"{base_url}/jobs") as response:
                     if response.status == 200:
                         html = await response.text()
@@ -232,6 +237,9 @@ class JobScraper:
                             except Exception as e:
                                 logger.warning(f"Error processing InHire job {i}: {e}")
                                 continue
+            except Exception as e:
+                logger.error(f"Error accessing InHire with session: {e}")
+                jobs.extend(self._get_fallback_inhire_jobs())
             
             # If no jobs found through scraping, add fallback
             if not jobs:
