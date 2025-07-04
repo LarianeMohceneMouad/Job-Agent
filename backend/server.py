@@ -789,10 +789,7 @@ async def get_jobs(user_id: str):
             query['location'] = {"$regex": locations_regex, "$options": "i"}
         
         jobs = list(jobs_collection.find(query).limit(50))
-        for job in jobs:
-            job['_id'] = str(job['_id'])
-        
-        return {"jobs": jobs, "count": len(jobs)}
+        return {"jobs": convert_objectid(jobs), "count": len(jobs)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
