@@ -31,10 +31,10 @@ client = MongoClient(MONGO_URL)
 db = client.job_application_db
 
 # Hugging Face client
-HUGGINGFACE_API_TOKEN = os.environ.get('HUGGINGFACE_API_TOKEN', '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')
+HUGGINGFACE_API_TOKEN = os.environ.get('HUGGINGFACE_API_TOKEN')
 if HUGGINGFACE_API_TOKEN:
     hf_client = InferenceClient(
-        model="gpt2",
+        model="mistralai/Mistral-7B-Instruct-v0.3",
         token=HUGGINGFACE_API_TOKEN
     )
 else:
