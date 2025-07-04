@@ -9,7 +9,8 @@ import {
   Briefcase, 
   LogOut,
   Menu,
-  X
+  X,
+  Brain
 } from 'lucide-react';
 
 const Navbar = ({ user, onLogout }) => {
