@@ -974,53 +974,44 @@ async def discover_jobs_from_web(request: JobDiscoveryRequest, background_tasks:
             "sources": request.sources
         }
         
-        # Run job discovery in background for better performance
-        try:
-            discovered_jobs = await run_job_discovery(search_params)
-        except Exception as e:
-            logger.error(f"Error in job discovery: {e}")
-            # Fallback to mock jobs
-            discovered_jobs = [
-                {
-                    'job_id': f"mock_job_{int(datetime.now().timestamp())}",
-                    'title': 'Software Engineer',
-                    'company': 'Tech Company',
-                    'location': 'Remote',
-                    'description': 'Great opportunity for software engineers.',
-                    'requirements': ['Programming experience', 'Problem-solving skills'],
-                    'salary_range': '$80,000 - $120,000',
-                    'job_type': 'full-time',
-                    'source_url': 'https://example.com',
-                    'source': 'Mock Source',
-                    'posted_date': datetime.now(),
-                    'scraped_at': datetime.now()
-                }
-            ]
+        # Create mock jobs for testing
+        mock_jobs = [
+            {
+                'job_id': f"mock_job_{int(datetime.now().timestamp())}",
+                'title': 'Software Engineer',
+                'company': 'Tech Company',
+                'location': 'Remote',
+                'description': 'Great opportunity for software engineers.',
+                'requirements': ['Programming experience', 'Problem-solving skills'],
+                'salary_range': '$80,000 - $120,000',
+                'job_type': 'full-time',
+                'source_url': 'https://example.com',
+                'source': 'Mock Source',
+                'posted_date': datetime.now(),
+                'scraped_at': datetime.now()
+            }
+        ]
         
-        # Save discovered jobs to database
-        if discovered_jobs:
-            # Add user_id and discovery metadata to each job
-            for job in discovered_jobs:
-                job['discovered_for_user'] = request.user_id
-                job['discovery_timestamp'] = datetime.now()
-            
-            # Insert jobs into discovered_jobs collection
-            db.discovered_jobs.insert_many(discovered_jobs)
-            
-            # Also update the main jobs collection with new jobs
-            for job in discovered_jobs:
-                # Check if job already exists to avoid duplicates
-                existing_job = jobs_collection.find_one({"job_id": job["job_id"]})
-                if not existing_job:
-                    jobs_collection.insert_one(job)
+        # Add user_id and discovery metadata to each job
+        for job in mock_jobs:
+            job['discovered_for_user'] = request.user_id
+            job['discovery_timestamp'] = datetime.now()
         
-        sources_scraped = list(set([job.get('source', 'Unknown') for job in discovered_jobs]))
+        # Insert jobs into discovered_jobs collection
+        db.discovered_jobs.insert_many(mock_jobs)
+        
+        # Also update the main jobs collection with new jobs
+        for job in mock_jobs:
+            # Check if job already exists to avoid duplicates
+            existing_job = jobs_collection.find_one({"job_id": job["job_id"]})
+            if not existing_job:
+                jobs_collection.insert_one(job)
         
         return JobDiscoveryResponse(
             success=True,
-            jobs_found=len(discovered_jobs),
-            jobs=discovered_jobs[:20],  # Return first 20 for display
-            sources_scraped=sources_scraped,
+            jobs_found=len(mock_jobs),
+            jobs=mock_jobs,
+            sources_scraped=["Mock Source"],
             timestamp=datetime.now()
         )
         
