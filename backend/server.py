@@ -798,9 +798,7 @@ async def get_applications(user_id: str):
     """Get user's job applications"""
     try:
         applications = list(applications_collection.find({"user_id": user_id}))
-        for app in applications:
-            app['_id'] = str(app['_id'])
-        return {"applications": applications, "count": len(applications)}
+        return {"applications": convert_objectid(applications), "count": len(applications)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
