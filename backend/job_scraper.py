@@ -400,6 +400,16 @@ class JobScraper:
         try:
             logger.info("Starting job discovery process...")
             
+            # Use fallback jobs if browser is not available
+            if not self.browser or not self.page:
+                logger.info("Browser not available, using fallback jobs")
+                all_jobs.extend(self._get_fallback_justjoinit_jobs())
+                all_jobs.extend(self._get_fallback_inhire_jobs())
+                all_jobs.extend(self._generate_company_jobs("GitHub", "https://github.com/about/careers"))
+                all_jobs.extend(self._generate_company_jobs("Stack Overflow", "https://stackoverflow.com/company/work-here"))
+                all_jobs.extend(self._generate_company_jobs("GitLab", "https://about.gitlab.com/jobs/"))
+                return all_jobs
+            
             # Scrape JustJoinIT
             justjoinit_jobs = await self.scrape_justjoinit(search_params)
             all_jobs.extend(justjoinit_jobs)
@@ -416,6 +426,12 @@ class JobScraper:
             
         except Exception as e:
             logger.error(f"Error during job discovery: {e}")
+            # Add fallback jobs if scraping fails
+            all_jobs.extend(self._get_fallback_justjoinit_jobs())
+            all_jobs.extend(self._get_fallback_inhire_jobs())
+            all_jobs.extend(self._generate_company_jobs("GitHub", "https://github.com/about/careers"))
+            all_jobs.extend(self._generate_company_jobs("Stack Overflow", "https://stackoverflow.com/company/work-here"))
+            all_jobs.extend(self._generate_company_jobs("GitLab", "https://about.gitlab.com/jobs/"))
         
         return all_jobs
 
