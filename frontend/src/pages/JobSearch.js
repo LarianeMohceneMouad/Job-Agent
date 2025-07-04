@@ -173,7 +173,7 @@ const JobSearch = ({ user }) => {
         >
           <Send className="w-4 h-4" />
           <span>
-            {applying[job.job_id] ? 'Applying...' : job.applied ? 'Applied' : 'Apply Now'}
+            {applying[job.job_id] ? '🤖 AI Applying...' : job.applied ? 'Applied' : '🤖 AI Apply'}
           </span>
         </button>
       </div>
