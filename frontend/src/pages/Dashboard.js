@@ -19,6 +19,7 @@ import OnboardingGuide from '../components/OnboardingGuide';
 import toast from 'react-hot-toast';
 
 const Dashboard = ({ user }) => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalApplications: 0,
     pendingApplications: 0,
@@ -27,10 +28,24 @@ const Dashboard = ({ user }) => {
   });
   const [recentApplications, setRecentApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [setupProgress, setSetupProgress] = useState({
+    profile: false,
+    resume: false,
+    preferences: false
+  });
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
+    checkOnboarding();
   }, [user]);
+
+  const checkOnboarding = () => {
+    const onboardingCompleted = localStorage.getItem('onboarding_completed');
+    if (!onboardingCompleted) {
+      setShowOnboarding(true);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -39,6 +54,30 @@ const Dashboard = ({ user }) => {
       // Fetch applications
       const applicationsResponse = await applicationsAPI.getApplications(user.user_id);
       const applications = applicationsResponse.data.applications || [];
+      
+      // Check setup progress
+      const setupChecks = {
+        profile: false,
+        resume: false,
+        preferences: false
+      };
+
+      try {
+        const profileResponse = await userProfileAPI.get(user.user_id);
+        setupChecks.profile = !!(profileResponse.data.name && profileResponse.data.email);
+      } catch (e) { /* Profile not found */ }
+
+      try {
+        const resumeResponse = await resumeAPI.get(user.user_id);
+        setupChecks.resume = !!resumeResponse.data.content;
+      } catch (e) { /* Resume not found */ }
+
+      try {
+        const preferencesResponse = await preferencesAPI.get(user.user_id);
+        setupChecks.preferences = !!(preferencesResponse.data.job_titles && preferencesResponse.data.job_titles.length > 0);
+      } catch (e) { /* Preferences not found */ }
+
+      setSetupProgress(setupChecks);
       
       // Calculate stats
       const totalApplications = applications.length;
@@ -67,6 +106,10 @@ const Dashboard = ({ user }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOnboardingStep = (link) => {
+    navigate(link);
   };
 
   const StatCard = ({ icon: Icon, title, value, color = 'primary' }) => (
