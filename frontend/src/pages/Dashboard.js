@@ -12,7 +12,8 @@ import {
   Brain,
   Star,
   ArrowRight,
-  Zap
+  Zap,
+  User
 } from 'lucide-react';
 import { applicationsAPI, resumeAPI, userProfileAPI, preferencesAPI } from '../services/api';
 import OnboardingGuide from '../components/OnboardingGuide';
