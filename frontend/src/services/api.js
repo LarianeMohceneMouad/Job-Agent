@@ -54,6 +54,18 @@ export const aiAPI = {
   getUserAIContent: (userId) => api.get(`/api/ai/user-content/${userId}`),
 };
 
+// Job Discovery API (Phase 3: Web Automation)
+export const jobDiscoveryAPI = {
+  discoverJobs: (data) => api.post('/api/discover/jobs', data),
+  getDiscoveredJobs: (userId, source = null, limit = 50) => {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    if (source) params.append('source', source);
+    return api.get(`/api/discover/jobs/${userId}?${params}`);
+  },
+  getAvailableSources: () => api.get('/api/discover/sources'),
+  refreshJobs: (userId) => api.post(`/api/discover/refresh-jobs?user_id=${userId}`),
+};
+
 // Health Check
 export const healthCheck = () => api.get('/api/health');
 
