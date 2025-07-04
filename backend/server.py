@@ -34,7 +34,7 @@ db = client.job_application_db
 HUGGINGFACE_API_TOKEN = os.environ.get('HUGGINGFACE_API_TOKEN')
 if HUGGINGFACE_API_TOKEN:
     hf_client = InferenceClient(
-        model="mistralai/Mistral-7B-Instruct-v0.3",
+        model="google/gemma-2-2b-it",
         token=HUGGINGFACE_API_TOKEN
     )
 else:
