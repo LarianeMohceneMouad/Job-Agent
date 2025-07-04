@@ -143,22 +143,29 @@
 
 ## Technical Implementation
 
+### Web Automation Architecture
+- **Framework**: Playwright with async/await support
+- **Scraping**: BeautifulSoup for HTML parsing
+- **Storage**: MongoDB with job deduplication
+- **Rate Limiting**: Built-in delays and request throttling
+- **Fallback System**: Realistic mock jobs when scraping fails
+
 ### Backend Architecture
-- **Framework**: FastAPI with automatic OpenAPI docs
-- **Database**: MongoDB with proper collections
-- **AI Service**: Hugging Face Inference Client
+- **Framework**: FastAPI with 16 working endpoints
+- **Database**: MongoDB with 6 collections
+- **AI Service**: Hugging Face Google Gemma 2B
+- **Web Scraping**: Conservative Playwright automation
 - **File Processing**: PyPDF2 for resume parsing
 - **Authentication**: Simple user ID based system
-- **API Design**: RESTful endpoints with proper error handling
 
 ### Frontend Architecture
 - **Framework**: React 18 with modern hooks
+- **Pages**: 9 comprehensive pages
 - **Styling**: Tailwind CSS with custom components
 - **Routing**: React Router for navigation
 - **Forms**: React Hook Form for validation
 - **HTTP Client**: Axios for API calls
 - **State Management**: React state with useEffect
-- **AI Integration**: Dedicated AI Tools page with tabbed interface
 
 ### Key Files Structure
 ```
