@@ -572,8 +572,7 @@ async def get_resume(user_id: str):
     try:
         resume = resumes_collection.find_one({"user_id": user_id})
         if resume:
-            resume['_id'] = str(resume['_id'])
-            return resume
+            return convert_objectid(resume)
         else:
             raise HTTPException(status_code=404, detail="Resume not found")
     except Exception as e:
