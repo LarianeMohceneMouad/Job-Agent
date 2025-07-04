@@ -910,13 +910,10 @@ async def get_user_ai_content(user_id: str):
         job_matches = list(db.job_matches.find({"user_id": user_id}))
         
         # Convert ObjectId to string
-        for item in customized_resumes + cover_letters + job_matches:
-            item['_id'] = str(item['_id'])
-        
         return {
-            "customized_resumes": customized_resumes,
-            "cover_letters": cover_letters,
-            "job_matches": job_matches
+            "customized_resumes": convert_objectid(customized_resumes),
+            "cover_letters": convert_objectid(cover_letters),
+            "job_matches": convert_objectid(job_matches)
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
