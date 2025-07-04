@@ -493,7 +493,8 @@ async def get_user_profile(user_id: str):
         else:
             raise HTTPException(status_code=404, detail="User not found")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in get_user_profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.post("/api/resumes/upload")
 async def upload_resume(file: UploadFile = File(...), user_id: str = Form(...)):
