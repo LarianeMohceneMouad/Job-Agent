@@ -8,7 +8,8 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  Brain
 } from 'lucide-react';
 import { applicationsAPI, jobsAPI } from '../services/api';
 import toast from 'react-hot-toast';
