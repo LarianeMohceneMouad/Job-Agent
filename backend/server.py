@@ -30,6 +30,16 @@ MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
 client = MongoClient(MONGO_URL)
 db = client.job_application_db
 
+# Hugging Face client
+HUGGINGFACE_API_TOKEN = os.environ.get('HUGGINGFACE_API_TOKEN')
+if HUGGINGFACE_API_TOKEN:
+    hf_client = InferenceClient(
+        model="mistralai/Mistral-7B-Instruct-v0.1",
+        token=HUGGINGFACE_API_TOKEN
+    )
+else:
+    hf_client = None
+
 # Collections
 users_collection = db.users
 resumes_collection = db.resumes
