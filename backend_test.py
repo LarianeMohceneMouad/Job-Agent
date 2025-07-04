@@ -21,8 +21,9 @@ else:
 
 print(f"Using API URL: {API_URL}")
 
-# Test user ID
+# Test user IDs
 TEST_USER_ID = "test_user_123"
+TEST_USER_AI_ID = "test_user_ai"
 
 # Sample data for testing
 SAMPLE_PROFILE = {
