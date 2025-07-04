@@ -28,34 +28,87 @@ TEST_USER_AI_ID = "test_user_ai"
 # Sample data for testing
 SAMPLE_PROFILE = {
     "user_id": TEST_USER_ID,
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "phone": "555-123-4567",
-    "location": "New York, NY",
-    "linkedin_url": "https://linkedin.com/in/johndoe",
-    "github_url": "https://github.com/johndoe",
-    "portfolio_url": "https://johndoe.dev"
+    "name": "Emily Johnson",
+    "email": "emily.johnson@example.com",
+    "phone": "555-987-6543",
+    "location": "Seattle, WA",
+    "linkedin_url": "https://linkedin.com/in/emilyjohnson",
+    "github_url": "https://github.com/emilyjohnson",
+    "portfolio_url": "https://emilyjohnson.dev"
 }
 
 SAMPLE_PREFERENCES = {
     "user_id": TEST_USER_ID,
-    "job_titles": ["Software Engineer", "Full Stack Developer"],
-    "locations": ["New York, NY", "Remote"],
-    "min_salary": 100000,
-    "max_salary": 150000,
-    "experience_level": "Mid-level",
+    "job_titles": ["Software Engineer", "Full Stack Developer", "Frontend Developer"],
+    "locations": ["Seattle, WA", "San Francisco, CA", "Remote"],
+    "min_salary": 120000,
+    "max_salary": 180000,
+    "experience_level": "Senior",
     "job_type": "full-time",
-    "keywords": ["Python", "React", "FastAPI", "MongoDB"],
+    "keywords": ["Python", "React", "Node.js", "AWS", "Docker", "Kubernetes"],
     "excluded_companies": ["Bad Company Inc"]
 }
 
-# Sample data for AI testing
-SAMPLE_RESUME_TEXT = "John Doe, Software Engineer with 5 years experience in Python, React, JavaScript, MongoDB. Built scalable web applications."
-SAMPLE_JOB_TITLE = "Senior Software Engineer"
-SAMPLE_COMPANY = "TechCorp"
-SAMPLE_JOB_DESCRIPTION = "Looking for senior engineer with Python and React experience"
+# More realistic sample data for AI testing
+SAMPLE_RESUME_TEXT = """
+EMILY JOHNSON
+Seattle, WA | emily.johnson@example.com | 555-987-6543 | linkedin.com/in/emilyjohnson
 
-# AI test data
+PROFESSIONAL SUMMARY
+Innovative Software Engineer with 7+ years of experience building scalable web applications and cloud-native solutions. Expertise in full-stack development using React, Node.js, Python, and AWS. Passionate about clean code, performance optimization, and creating exceptional user experiences.
+
+SKILLS
+• Languages: JavaScript, TypeScript, Python, HTML5, CSS3, SQL
+• Frontend: React, Redux, Vue.js, Webpack, Tailwind CSS
+• Backend: Node.js, Express, FastAPI, Django, RESTful APIs, GraphQL
+• Cloud: AWS (EC2, S3, Lambda, DynamoDB), Docker, Kubernetes
+• Databases: MongoDB, PostgreSQL, Redis
+• Tools: Git, GitHub Actions, Jenkins, Jira, Figma
+
+PROFESSIONAL EXPERIENCE
+Senior Software Engineer | CloudTech Solutions | 2020 - Present
+• Led development of a microservices-based e-commerce platform serving 100K+ daily users
+• Implemented CI/CD pipelines reducing deployment time by 70%
+• Optimized database queries resulting in 40% performance improvement
+• Mentored junior developers and conducted code reviews
+
+Software Developer | WebInnovate Inc | 2017 - 2020
+• Developed responsive web applications using React and Node.js
+• Created RESTful APIs for mobile application backend
+• Implemented authentication and authorization systems
+• Collaborated with UX/UI designers to implement pixel-perfect interfaces
+
+EDUCATION
+Master of Science in Computer Science | University of Washington | 2017
+Bachelor of Science in Software Engineering | Oregon State University | 2015
+
+PROJECTS
+• E-commerce Platform: Built with React, Node.js, and MongoDB
+• Task Management App: Full-stack application with real-time features
+• Personal Portfolio: Responsive website showcasing projects and skills
+"""
+
+SAMPLE_JOB_TITLE = "Senior Software Engineer"
+SAMPLE_COMPANY = "TechCorp Inc"
+SAMPLE_JOB_DESCRIPTION = """
+Join our innovative team building next-generation web applications. We're looking for a Senior Software Engineer with expertise in Python, React, and cloud technologies to help scale our platform serving millions of users.
+
+Responsibilities:
+• Design, develop, and maintain scalable web applications
+• Collaborate with cross-functional teams to define and implement new features
+• Write clean, maintainable, and efficient code
+• Participate in code reviews and mentor junior developers
+• Troubleshoot and debug complex issues
+
+Requirements:
+• 5+ years of software development experience
+• Proficiency in Python, JavaScript, and React
+• Experience with cloud platforms (AWS, GCP)
+• Strong problem-solving and communication skills
+• Bachelor's degree in Computer Science or related field
+"""
+
+# Enhanced AI test data
 SAMPLE_RESUME_CUSTOMIZATION_REQUEST = {
     "user_id": TEST_USER_AI_ID,
     "original_resume": SAMPLE_RESUME_TEXT,
@@ -66,12 +119,12 @@ SAMPLE_RESUME_CUSTOMIZATION_REQUEST = {
 
 SAMPLE_COVER_LETTER_REQUEST = {
     "user_id": TEST_USER_AI_ID,
-    "applicant_name": "John Doe",
+    "applicant_name": "Emily Johnson",
     "job_title": SAMPLE_JOB_TITLE,
     "company": SAMPLE_COMPANY,
     "job_description": SAMPLE_JOB_DESCRIPTION,
     "user_background": SAMPLE_RESUME_TEXT,
-    "skills": ["Python", "React", "JavaScript", "MongoDB"]
+    "skills": ["Python", "React", "JavaScript", "AWS", "Node.js", "MongoDB"]
 }
 
 SAMPLE_JOB_MATCH_REQUEST = {
@@ -79,17 +132,30 @@ SAMPLE_JOB_MATCH_REQUEST = {
     "resume_text": SAMPLE_RESUME_TEXT,
     "job_title": SAMPLE_JOB_TITLE,
     "job_description": SAMPLE_JOB_DESCRIPTION,
-    "requirements": ["Python experience", "React experience", "5+ years of experience"]
+    "requirements": [
+        "5+ years of software development experience",
+        "Proficiency in Python, JavaScript, and React",
+        "Experience with cloud platforms (AWS, GCP)",
+        "Strong problem-solving and communication skills",
+        "Bachelor's degree in Computer Science or related field"
+    ]
 }
 
 SAMPLE_JOB_DATA = {
-    "job_id": "sample_job_123",
+    "job_id": "job_1",
     "title": SAMPLE_JOB_TITLE,
     "company": SAMPLE_COMPANY,
     "description": SAMPLE_JOB_DESCRIPTION,
-    "requirements": ["Python experience", "React experience", "5+ years of experience"],
+    "requirements": [
+        "5+ years of software development experience",
+        "Proficiency in Python, JavaScript, and React",
+        "Experience with cloud platforms (AWS, GCP)",
+        "Strong problem-solving and communication skills",
+        "Bachelor's degree in Computer Science or related field"
+    ],
     "location": "San Francisco, CA",
-    "job_type": "full-time"
+    "job_type": "full-time",
+    "salary_range": "$120,000 - $160,000"
 }
 
 # Helper function to create a test PDF
