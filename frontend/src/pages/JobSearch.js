@@ -11,7 +11,7 @@ import {
   RefreshCw,
   AlertCircle
 } from 'lucide-react';
-import { jobsAPI } from '../services/api';
+import { jobsAPI, aiAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const JobSearch = ({ user }) => {
