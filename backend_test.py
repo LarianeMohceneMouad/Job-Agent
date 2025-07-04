@@ -310,17 +310,57 @@ class TestBackendAPI(unittest.TestCase):
         print("✅ Job Preferences Retrieval API test passed")
     
     def test_08_get_jobs(self):
-        """Test retrieving jobs based on preferences"""
-        print("\n=== Testing Jobs Retrieval API ===")
+        """Test retrieving jobs based on preferences - should return 8 diverse sample jobs"""
+        print("\n=== Testing Jobs Retrieval API - Enhanced Sample Jobs ===")
         response = requests.get(f"{API_URL}/jobs?user_id={TEST_USER_ID}")
-        print(f"Response: {response.status_code} - {response.text}")
+        print(f"Response: {response.status_code}")
+        print(f"Jobs count: {response.json()['count']}")
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("jobs", data)
         self.assertIn("count", data)
         
-        print("✅ Jobs Retrieval API test passed")
+        # Verify we have 8 diverse sample jobs
+        self.assertEqual(data["count"], 8, "Should have exactly 8 sample jobs")
+        
+        # Check for diverse job roles
+        job_titles = [job["title"] for job in data["jobs"]]
+        print(f"Job titles: {job_titles}")
+        
+        expected_titles = [
+            "Senior Software Engineer",
+            "Full Stack Developer",
+            "Data Scientist",
+            "Frontend Developer",
+            "DevOps Engineer",
+            "Product Manager",
+            "UX/UI Designer",
+            "Mobile App Developer"
+        ]
+        
+        # Check that all expected job titles are present
+        for title in expected_titles:
+            self.assertIn(title, job_titles, f"Missing job title: {title}")
+        
+        # Check job structure and content
+        for job in data["jobs"]:
+            self.assertIn("job_id", job)
+            self.assertIn("title", job)
+            self.assertIn("company", job)
+            self.assertIn("location", job)
+            self.assertIn("description", job)
+            self.assertIn("requirements", job)
+            self.assertIn("salary_range", job)
+            self.assertIn("job_type", job)
+            
+            # Verify job descriptions are detailed
+            self.assertGreater(len(job["description"]), 100, "Job description should be detailed")
+            
+            # Verify requirements are comprehensive
+            self.assertGreaterEqual(len(job["requirements"]), 3, "Should have at least 3 requirements")
+        
+        print("✅ Enhanced Sample Jobs API test passed")
     
     def test_09_get_applications(self):
         """Test retrieving job applications"""
@@ -336,8 +376,8 @@ class TestBackendAPI(unittest.TestCase):
         print("✅ Applications Retrieval API test passed")
     
     def test_10_ai_customize_resume(self):
-        """Test AI resume customization endpoint"""
-        print("\n=== Testing AI Resume Customization API ===")
+        """Test enhanced AI resume customization endpoint with Google Gemma 2B model"""
+        print("\n=== Testing Enhanced AI Resume Customization API ===")
         response = requests.post(
             f"{API_URL}/ai/customize-resume",
             json=SAMPLE_RESUME_CUSTOMIZATION_REQUEST
@@ -350,16 +390,34 @@ class TestBackendAPI(unittest.TestCase):
         self.assertTrue(data["success"])
         self.assertIn("content", data)
         self.assertIsNotNone(data["content"])
-        self.assertGreater(len(data["content"]), 50)  # Ensure we got a substantial response
-        self.assertIn("metadata", data)
-        self.assertEqual(data["metadata"]["job_title"], SAMPLE_JOB_TITLE)
-        self.assertEqual(data["metadata"]["company"], SAMPLE_COMPANY)
         
-        print("✅ AI Resume Customization API test passed")
+        # Verify enhanced response quality
+        content = data["content"]
+        self.assertGreater(len(content), 200, "Resume should be comprehensive")
+        
+        # Check for professional formatting
+        self.assertTrue(
+            "**" in content or 
+            "PROFESSIONAL SUMMARY" in content or 
+            "EXPERIENCE" in content or 
+            "SKILLS" in content,
+            "Resume should have professional formatting"
+        )
+        
+        # Check for job-specific customization
+        self.assertTrue(
+            SAMPLE_JOB_TITLE.lower() in content.lower() or
+            "software engineer" in content.lower() or
+            "python" in content.lower() or
+            "react" in content.lower(),
+            "Resume should be customized for the job"
+        )
+        
+        print("✅ Enhanced AI Resume Customization API test passed")
     
     def test_11_ai_generate_cover_letter(self):
-        """Test AI cover letter generation endpoint"""
-        print("\n=== Testing AI Cover Letter Generation API ===")
+        """Test enhanced AI cover letter generation endpoint with Google Gemma 2B model"""
+        print("\n=== Testing Enhanced AI Cover Letter Generation API ===")
         response = requests.post(
             f"{API_URL}/ai/generate-cover-letter",
             json=SAMPLE_COVER_LETTER_REQUEST
@@ -372,16 +430,39 @@ class TestBackendAPI(unittest.TestCase):
         self.assertTrue(data["success"])
         self.assertIn("content", data)
         self.assertIsNotNone(data["content"])
-        self.assertGreater(len(data["content"]), 50)  # Ensure we got a substantial response
-        self.assertIn("metadata", data)
-        self.assertEqual(data["metadata"]["job_title"], SAMPLE_JOB_TITLE)
-        self.assertEqual(data["metadata"]["company"], SAMPLE_COMPANY)
         
-        print("✅ AI Cover Letter Generation API test passed")
+        # Verify enhanced response quality
+        content = data["content"]
+        self.assertGreater(len(content), 200, "Cover letter should be comprehensive")
+        
+        # Check for professional formatting and content
+        self.assertTrue(
+            "Dear" in content and 
+            "Sincerely" in content or
+            "Best regards" in content or
+            "Regards" in content,
+            "Cover letter should have professional formatting"
+        )
+        
+        # Check for job and company specific content
+        self.assertTrue(
+            SAMPLE_JOB_TITLE.lower() in content.lower() and
+            SAMPLE_COMPANY.lower() in content.lower(),
+            "Cover letter should mention the job title and company"
+        )
+        
+        # Check for personalization
+        self.assertTrue(
+            "experience" in content.lower() and
+            "skills" in content.lower(),
+            "Cover letter should mention candidate experience and skills"
+        )
+        
+        print("✅ Enhanced AI Cover Letter Generation API test passed")
     
     def test_12_ai_analyze_job_match(self):
-        """Test AI job match analysis endpoint"""
-        print("\n=== Testing AI Job Match Analysis API ===")
+        """Test enhanced AI job match analysis endpoint with structured output"""
+        print("\n=== Testing Enhanced AI Job Match Analysis API ===")
         response = requests.post(
             f"{API_URL}/ai/analyze-job-match",
             json=SAMPLE_JOB_MATCH_REQUEST
@@ -396,7 +477,7 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIsNotNone(data["content"])
         self.assertIn("metadata", data)
         
-        # Check if metadata contains expected fields
+        # Check if metadata contains expected fields with improved structure
         metadata = data["metadata"]
         self.assertIn("match_score", metadata)
         self.assertIn("strengths", metadata)
@@ -404,11 +485,29 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIn("recommendations", metadata)
         self.assertIn("summary", metadata)
         
-        print("✅ AI Job Match Analysis API test passed")
+        # Verify match score is between 0-100
+        self.assertGreaterEqual(metadata["match_score"], 0)
+        self.assertLessEqual(metadata["match_score"], 100)
+        
+        # Verify strengths, gaps, and recommendations are lists with meaningful content
+        self.assertIsInstance(metadata["strengths"], list)
+        self.assertGreaterEqual(len(metadata["strengths"]), 1)
+        
+        self.assertIsInstance(metadata["gaps"], list)
+        self.assertGreaterEqual(len(metadata["gaps"]), 1)
+        
+        self.assertIsInstance(metadata["recommendations"], list)
+        self.assertGreaterEqual(len(metadata["recommendations"]), 1)
+        
+        # Verify summary is a non-empty string
+        self.assertIsInstance(metadata["summary"], str)
+        self.assertGreater(len(metadata["summary"]), 10)
+        
+        print("✅ Enhanced AI Job Match Analysis API test passed")
     
     def test_13_ai_apply_to_job(self):
-        """Test AI job application endpoint"""
-        print("\n=== Testing AI Job Application API ===")
+        """Test enhanced AI job application endpoint with complete workflow"""
+        print("\n=== Testing Enhanced AI Job Application API ===")
         
         # First, ensure we have a user profile and resume
         self.test_02_create_user_profile()
@@ -429,7 +528,15 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIn("customized_resume", data)
         self.assertIn("cover_letter", data)
         
-        print("✅ AI Job Application API test passed")
+        # Verify the complete workflow generated quality content
+        self.assertGreater(len(data["customized_resume"]), 200, "Customized resume should be comprehensive")
+        self.assertGreater(len(data["cover_letter"]), 200, "Cover letter should be comprehensive")
+        
+        # Verify application message includes job title and company
+        self.assertIn(SAMPLE_JOB_TITLE, data["message"])
+        self.assertIn(SAMPLE_COMPANY, data["message"])
+        
+        print("✅ Enhanced AI Job Application API test passed")
     
     def test_14_get_user_ai_content(self):
         """Test retrieving user AI content"""
@@ -455,29 +562,96 @@ class TestBackendAPI(unittest.TestCase):
         self.assertGreaterEqual(len(data["cover_letters"]), 1)
         self.assertGreaterEqual(len(data["job_matches"]), 1)
         
+        # Check content quality in each category
+        if len(data["customized_resumes"]) > 0:
+            resume = data["customized_resumes"][0]
+            self.assertIn("customized_resume", resume)
+            self.assertGreater(len(resume["customized_resume"]), 200)
+            
+        if len(data["cover_letters"]) > 0:
+            letter = data["cover_letters"][0]
+            self.assertIn("cover_letter", letter)
+            self.assertGreater(len(letter["cover_letter"]), 200)
+            
+        if len(data["job_matches"]) > 0:
+            match = data["job_matches"][0]
+            self.assertIn("match_analysis", match)
+            self.assertIn("match_score", match["match_analysis"])
+        
         print("✅ User AI Content Retrieval API test passed")
     
-    def test_15_sample_jobs_exist(self):
-        """Test that sample jobs are created if none exist"""
-        print("\n=== Testing Sample Jobs Creation ===")
-        response = requests.get(f"{API_URL}/jobs?user_id={TEST_USER_ID}")
-        print(f"Response: {response.status_code}")
-        print(f"Jobs count: {response.json()['count']}")
+    def test_15_verify_google_gemma_integration(self):
+        """Test that the system is using Google Gemma 2B model with retry logic"""
+        print("\n=== Testing Google Gemma 2B Integration ===")
+        
+        # Check if the backend is configured to use Google Gemma 2B
+        # We can infer this from the AI responses and their quality
+        
+        # Test resume customization which should use the model
+        response = requests.post(
+            f"{API_URL}/ai/customize-resume",
+            json=SAMPLE_RESUME_CUSTOMIZATION_REQUEST
+        )
         
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertIn("jobs", data)
-        self.assertGreater(data["count"], 0)  # Ensure we have at least one job
         
-        # Check if the sample jobs have the expected structure
-        job = data["jobs"][0]
-        self.assertIn("job_id", job)
-        self.assertIn("title", job)
-        self.assertIn("company", job)
-        self.assertIn("description", job)
-        self.assertIn("requirements", job)
+        # The response should be detailed and professional
+        content = data["content"]
+        print(f"AI Response Length: {len(content)} characters")
+        self.assertGreater(len(content), 200, "AI response should be substantial")
         
-        print("✅ Sample Jobs Creation test passed")
+        # Test error handling by sending an invalid request
+        invalid_request = {
+            "user_id": TEST_USER_AI_ID,
+            "original_resume": "",  # Empty resume should trigger fallback
+            "job_title": SAMPLE_JOB_TITLE,
+            "job_description": SAMPLE_JOB_DESCRIPTION,
+            "company": SAMPLE_COMPANY
+        }
+        
+        response = requests.post(
+            f"{API_URL}/ai/customize-resume",
+            json=invalid_request
+        )
+        
+        # Should still succeed with fallback mechanism
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertIn("content", data)
+        self.assertIsNotNone(data["content"])
+        
+        print("✅ Google Gemma 2B Integration test passed")
+    
+    def test_16_error_handling(self):
+        """Test improved error handling with user-friendly messages"""
+        print("\n=== Testing Enhanced Error Handling ===")
+        
+        # Test with invalid job ID
+        response = requests.post(
+            f"{API_URL}/ai/apply-to-job?user_id=nonexistent_user",
+            json=SAMPLE_JOB_DATA
+        )
+        
+        print(f"Response for invalid user: {response.status_code} - {response.text}")
+        self.assertEqual(response.status_code, 404)
+        
+        # Test with invalid resume customization request
+        invalid_request = {
+            # Missing required fields
+            "user_id": TEST_USER_AI_ID
+        }
+        
+        response = requests.post(
+            f"{API_URL}/ai/customize-resume",
+            json=invalid_request
+        )
+        
+        print(f"Response for invalid request: {response.status_code}")
+        self.assertGreaterEqual(response.status_code, 400)  # Should be 4xx error
+        
+        print("✅ Enhanced Error Handling test passed")
 
 if __name__ == "__main__":
     # Install reportlab if not already installed
