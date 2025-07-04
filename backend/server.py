@@ -128,6 +128,21 @@ class AIResponse(BaseModel):
     content: str
     metadata: Optional[dict] = None
 
+# Web Scraping Models
+class JobDiscoveryRequest(BaseModel):
+    user_id: str
+    keywords: Optional[List[str]] = []
+    locations: Optional[List[str]] = []
+    job_titles: Optional[List[str]] = []
+    sources: Optional[List[str]] = ["justjoinit", "inhire", "companies"]
+
+class JobDiscoveryResponse(BaseModel):
+    success: bool
+    jobs_found: int
+    jobs: List[dict]
+    sources_scraped: List[str]
+    timestamp: datetime
+
 # Utility functions
 def parse_pdf_resume(file_content: bytes) -> str:
     """Extract text from PDF resume"""
