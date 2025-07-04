@@ -411,15 +411,114 @@ async def get_jobs(user_id: str):
     try:
         # Get user preferences
         preferences = db.preferences.find_one({"user_id": user_id})
-        if not preferences:
-            return {"jobs": [], "message": "No preferences set"}
+        
+        # Check if we have jobs in database, if not, create sample jobs
+        job_count = jobs_collection.count_documents({})
+        if job_count == 0:
+            # Create sample jobs for testing
+            sample_jobs = [
+                {
+                    "job_id": "job_1",
+                    "title": "Senior Software Engineer",
+                    "company": "TechCorp Inc",
+                    "location": "San Francisco, CA",
+                    "description": "We are looking for a Senior Software Engineer to join our team. You will be responsible for designing, developing, and maintaining web applications using modern technologies.",
+                    "requirements": [
+                        "5+ years of software development experience",
+                        "Proficiency in Python, JavaScript, and React",
+                        "Experience with cloud platforms (AWS, GCP)",
+                        "Strong problem-solving skills"
+                    ],
+                    "salary_range": "$120,000 - $160,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job1",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_2",
+                    "title": "Full Stack Developer",
+                    "company": "StartupXYZ",
+                    "location": "New York, NY",
+                    "description": "Join our fast-growing startup as a Full Stack Developer. Work with cutting-edge technologies and help build products that impact millions of users.",
+                    "requirements": [
+                        "3+ years of full stack development",
+                        "React, Node.js, MongoDB experience",
+                        "Understanding of RESTful APIs",
+                        "Startup experience preferred"
+                    ],
+                    "salary_range": "$90,000 - $130,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job2",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_3",
+                    "title": "Data Scientist",
+                    "company": "DataTech Solutions",
+                    "location": "Austin, TX",
+                    "description": "We're seeking a Data Scientist to analyze complex datasets and build machine learning models that drive business decisions.",
+                    "requirements": [
+                        "PhD or Masters in Data Science, Statistics, or related field",
+                        "Experience with Python, R, and SQL",
+                        "Machine learning and statistical modeling",
+                        "Experience with big data tools"
+                    ],
+                    "salary_range": "$110,000 - $150,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job3",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_4",
+                    "title": "Frontend Developer",
+                    "company": "WebDesign Pro",
+                    "location": "Remote",
+                    "description": "Looking for a talented Frontend Developer to create beautiful, responsive web interfaces using modern frameworks.",
+                    "requirements": [
+                        "3+ years of frontend development",
+                        "Expert in React, HTML5, CSS3",
+                        "Experience with modern build tools",
+                        "Strong design sense"
+                    ],
+                    "salary_range": "$80,000 - $120,000",
+                    "job_type": "remote",
+                    "source_url": "https://example.com/job4",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                },
+                {
+                    "job_id": "job_5",
+                    "title": "DevOps Engineer",
+                    "company": "CloudFirst Technologies",
+                    "location": "Seattle, WA",
+                    "description": "Join our DevOps team to build and maintain scalable infrastructure. Work with containerization, CI/CD, and cloud technologies.",
+                    "requirements": [
+                        "4+ years of DevOps experience",
+                        "Docker, Kubernetes, Jenkins",
+                        "AWS or Azure cloud platforms",
+                        "Infrastructure as Code (Terraform)"
+                    ],
+                    "salary_range": "$100,000 - $140,000",
+                    "job_type": "full-time",
+                    "source_url": "https://example.com/job5",
+                    "posted_date": datetime.now(),
+                    "scraped_at": datetime.now()
+                }
+            ]
+            
+            jobs_collection.insert_many(sample_jobs)
         
         # Build query based on preferences
         query = {}
-        if preferences.get('job_titles'):
-            query['title'] = {"$regex": "|".join(preferences['job_titles']), "$options": "i"}
-        if preferences.get('locations'):
-            query['location'] = {"$regex": "|".join(preferences['locations']), "$options": "i"}
+        if preferences and preferences.get('job_titles'):
+            job_titles_regex = "|".join(preferences['job_titles'])
+            query['title'] = {"$regex": job_titles_regex, "$options": "i"}
+        if preferences and preferences.get('locations'):
+            locations_regex = "|".join(preferences['locations'])
+            query['location'] = {"$regex": locations_regex, "$options": "i"}
         
         jobs = list(jobs_collection.find(query).limit(50))
         for job in jobs:
