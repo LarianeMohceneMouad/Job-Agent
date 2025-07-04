@@ -12,6 +12,7 @@ import PyPDF2
 import io
 import re
 from pydantic import BaseModel
+from huggingface_hub import InferenceClient
 
 app = FastAPI(title="AI Job Application System", version="1.0.0")
 
