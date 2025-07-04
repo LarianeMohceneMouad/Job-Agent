@@ -925,6 +925,153 @@ async def ai_apply_to_job(user_id: str, job_data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Job Discovery Endpoints (Phase 3: Web Automation)
+@app.post("/api/discover/jobs")
+async def discover_jobs_from_web(request: JobDiscoveryRequest, background_tasks: BackgroundTasks):
+    """Discover jobs from web sources (JustJoinIT, InHire, Company careers)"""
+    try:
+        # Prepare search parameters
+        search_params = {
+            "keywords": request.keywords,
+            "locations": request.locations,
+            "job_titles": request.job_titles,
+            "sources": request.sources
+        }
+        
+        # Run job discovery in background for better performance
+        discovered_jobs = await run_job_discovery(search_params)
+        
+        # Save discovered jobs to database
+        if discovered_jobs:
+            # Add user_id and discovery metadata to each job
+            for job in discovered_jobs:
+                job['discovered_for_user'] = request.user_id
+                job['discovery_timestamp'] = datetime.now()
+            
+            # Insert jobs into discovered_jobs collection
+            db.discovered_jobs.insert_many(discovered_jobs)
+            
+            # Also update the main jobs collection with new jobs
+            for job in discovered_jobs:
+                # Check if job already exists to avoid duplicates
+                existing_job = jobs_collection.find_one({"job_id": job["job_id"]})
+                if not existing_job:
+                    jobs_collection.insert_one(job)
+        
+        sources_scraped = list(set([job.get('source', 'Unknown') for job in discovered_jobs]))
+        
+        return JobDiscoveryResponse(
+            success=True,
+            jobs_found=len(discovered_jobs),
+            jobs=discovered_jobs[:20],  # Return first 20 for display
+            sources_scraped=sources_scraped,
+            timestamp=datetime.now()
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Job discovery failed: {str(e)}")
+
+@app.get("/api/discover/jobs/{user_id}")
+async def get_discovered_jobs(user_id: str, source: Optional[str] = None, limit: int = 50):
+    """Get jobs discovered for a specific user"""
+    try:
+        query = {"discovered_for_user": user_id}
+        if source:
+            query["source"] = source
+        
+        discovered_jobs = list(
+            db.discovered_jobs.find(query)
+            .sort("discovery_timestamp", -1)
+            .limit(limit)
+        )
+        
+        # Convert ObjectId to string
+        for job in discovered_jobs:
+            job['_id'] = str(job['_id'])
+        
+        return {
+            "success": True,
+            "jobs": discovered_jobs,
+            "count": len(discovered_jobs)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/discover/sources")
+async def get_available_sources():
+    """Get available job discovery sources"""
+    return {
+        "sources": [
+            {
+                "id": "justjoinit",
+                "name": "JustJoinIT",
+                "description": "Leading IT job board in Poland",
+                "website": "https://justjoin.it",
+                "supported_locations": ["Poland", "Europe"],
+                "job_types": ["IT", "Tech", "Software Development"]
+            },
+            {
+                "id": "inhire",
+                "name": "InHire",
+                "description": "European tech talent platform",
+                "website": "https://inhire.io",
+                "supported_locations": ["Europe", "Remote"],
+                "job_types": ["Tech", "Software", "Engineering"]
+            },
+            {
+                "id": "companies",
+                "name": "Company Career Pages",
+                "description": "Direct company career pages",
+                "website": "Various",
+                "supported_locations": ["Global", "Remote"],
+                "job_types": ["All tech roles"]
+            }
+        ]
+    }
+
+@app.post("/api/discover/refresh-jobs")
+async def refresh_job_discoveries(user_id: str):
+    """Refresh job discoveries for a user"""
+    try:
+        # Get user preferences for targeted discovery
+        preferences = db.preferences.find_one({"user_id": user_id})
+        
+        search_params = {}
+        if preferences:
+            search_params = {
+                "keywords": preferences.get("keywords", []),
+                "locations": preferences.get("locations", []),
+                "job_titles": preferences.get("job_titles", [])
+            }
+        
+        # Run discovery
+        discovered_jobs = await run_job_discovery(search_params)
+        
+        # Save new discoveries
+        if discovered_jobs:
+            for job in discovered_jobs:
+                job['discovered_for_user'] = user_id
+                job['discovery_timestamp'] = datetime.now()
+                
+                # Check for duplicates before inserting
+                existing = db.discovered_jobs.find_one({
+                    "job_id": job["job_id"],
+                    "discovered_for_user": user_id
+                })
+                
+                if not existing:
+                    db.discovered_jobs.insert_one(job)
+        
+        return {
+            "success": True,
+            "message": f"Discovered {len(discovered_jobs)} new jobs",
+            "jobs_found": len(discovered_jobs)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
