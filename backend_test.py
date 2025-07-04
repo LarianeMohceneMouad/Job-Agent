@@ -49,6 +49,49 @@ SAMPLE_PREFERENCES = {
     "excluded_companies": ["Bad Company Inc"]
 }
 
+# Sample data for AI testing
+SAMPLE_RESUME_TEXT = "John Doe, Software Engineer with 5 years experience in Python, React, JavaScript, MongoDB. Built scalable web applications."
+SAMPLE_JOB_TITLE = "Senior Software Engineer"
+SAMPLE_COMPANY = "TechCorp"
+SAMPLE_JOB_DESCRIPTION = "Looking for senior engineer with Python and React experience"
+
+# AI test data
+SAMPLE_RESUME_CUSTOMIZATION_REQUEST = {
+    "user_id": TEST_USER_AI_ID,
+    "original_resume": SAMPLE_RESUME_TEXT,
+    "job_title": SAMPLE_JOB_TITLE,
+    "job_description": SAMPLE_JOB_DESCRIPTION,
+    "company": SAMPLE_COMPANY
+}
+
+SAMPLE_COVER_LETTER_REQUEST = {
+    "user_id": TEST_USER_AI_ID,
+    "applicant_name": "John Doe",
+    "job_title": SAMPLE_JOB_TITLE,
+    "company": SAMPLE_COMPANY,
+    "job_description": SAMPLE_JOB_DESCRIPTION,
+    "user_background": SAMPLE_RESUME_TEXT,
+    "skills": ["Python", "React", "JavaScript", "MongoDB"]
+}
+
+SAMPLE_JOB_MATCH_REQUEST = {
+    "user_id": TEST_USER_AI_ID,
+    "resume_text": SAMPLE_RESUME_TEXT,
+    "job_title": SAMPLE_JOB_TITLE,
+    "job_description": SAMPLE_JOB_DESCRIPTION,
+    "requirements": ["Python experience", "React experience", "5+ years of experience"]
+}
+
+SAMPLE_JOB_DATA = {
+    "job_id": "sample_job_123",
+    "title": SAMPLE_JOB_TITLE,
+    "company": SAMPLE_COMPANY,
+    "description": SAMPLE_JOB_DESCRIPTION,
+    "requirements": ["Python experience", "React experience", "5+ years of experience"],
+    "location": "San Francisco, CA",
+    "job_type": "full-time"
+}
+
 # Helper function to create a test PDF
 def create_test_pdf():
     """Create a simple PDF file for testing resume upload"""
